@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #333;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 2rem 5%;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header p {
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+
+        .admin-nav {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+        }
+
+        .admin-nav button {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .admin-nav button.active,
+        .admin-nav button:hover {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            border-color: #DAA520;
+        }
+
+        .admin-container {
+            padding: 3rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #DAA520;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #DAA520;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #DAA520;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .event-card,
+        .gallery-card,
+        .message-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .event-info h3 {
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-info p {
+            color: #666;
+            margin: 0.3rem 0;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .gallery-preview {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .message-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .message-info strong {
+            color: #DAA520;
+        }
+
+        .message-content {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-new {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-read {
+            background: #6c757d;
+            color: white;
+        }
+
+        .upload-area {
+            border: 3px dashed #DAA520;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fffef8;
+        }
+
+        .upload-area:hover {
+            background: #fff9e6;
+            border-color: #FFD700;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .user-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h4 {
+            color: #DAA520;
+            margin-bottom: 0.3rem;
+        }
+
+        .user-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #dc3545;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .event-card,
+            .gallery-card,
+            .message-card {
+                flex-direction: column;
+            }
+
+            .event-actions {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>🛠️ Admin Control Panel</h1>
+        <p>Welcome, Admin! Manage your association's content and members</p>
+    </div>
+
+    <nav class="admin-nav">
+        <button class="active" onclick="showSection('dashboard')">📊 Dashboard</button>
+        <button onclick="showSection('events')">📅 Manage Events</button>
+        <button onclick="showSection('gallery')">🖼️ Manage Gallery</button>
+        <button onclick="showSection('messages')">💬 Contact Messages</button>
+        <button onclick="showSection('users')">👥 Manage Users</button>
+        <button onclick="showSection('admins')">🔐 Manage Admins</button>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="admin-section active">
+            <h2 class="section-title">📊 Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Members</h3>
+                    <div class="number" id="totalMembers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Upcoming Events</h3>
+                    <div class="number" id="totalEvents">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Gallery Photos</h3>
+                    <div class="number" id="totalPhotos">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Unread Messages</h3>
+                    <div class="number" id="unreadMessages">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showSection('events')">+ Add New Event</button>
+                    <button class="btn btn-primary" onclick="showSection('gallery')">+ Upload Photos</button>
+                    <button class="btn btn-secondary" onclick="showSection('messages')">View Messages</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Management Section -->
+        <div id="events" class="admin-section">
+            <h2 class="section-title">📅 Manage Events</h2>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Add New Event</h3>
+                <form id="addEventForm">
+                    <div class="form-group">
+                        <label>Event Name *</label>
+                        <input type="text" id="eventName" required placeholder="e.g., Sankranti Festival 2026">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Time *</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" id="eventLocation" required placeholder="e.g., Community Hall, Klang">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="eventDescription" required placeholder="Describe the event..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Icon (emoji)</label>
+                        <input type="text" id="eventIcon" placeholder="🪔" maxlength="2">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </form>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Existing Events</h3>
+                <div id="eventsList"></div>
+            </div>
+        </div>
+
+        <!-- Gallery Management Section -->
+        <div id="gallery" class="admin-section">
+            <h2 class="section-title">🖼️ Manage Gallery</h2>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Add New Photo</h3>
+                <form id="addPhotoForm">
+                    <div class="form-group">
+                        <label>Photo Title *</label>
+                        <input type="text" id="photoTitle" required placeholder="e.g., Sankranti 2025">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <input type="text" id="photoDescription" required placeholder="Brief description">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="photoCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="festivals">Festivals</option>
+                            <option value="cultural">Cultural Events</option>
+                            <option value="family">Family Events</option>
+                            <option value="youth">Youth Programs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Photo Icon (emoji)</label>
+                        <input type="text" id="photoIcon" placeholder="🪔" maxlength="2">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Photo</button>
+                </form>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Gallery Photos</h3>
+                <div class="gallery-grid" id="galleryList"></div>
+            </div>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="messages" class="admin-section">
+            <h2 class="section-title">💬 Contact Messages</h2>
+            <div id="messagesList"></div>
+        </div>
+
+        <!-- Users Management Section -->
+        <div id="users" class="admin-section">
+            <h2 class="section-title">👥 Manage Users</h2>
+            <div class="user-list" id="usersList"></div>
+        </div>
+
+        <!-- Admins Management Section -->
+        <div id="admins" class="admin-section">
+            <h2 class="section-title">🔐 Manage Admins</h2>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Add New Admin</h3>
+                <form id="addAdminForm">
+                    <div class="form-group">
+                        <label>Admin Email *</label>
+                        <input type="email" id="adminEmail" required placeholder="Enter user's email">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Grant Admin Access</button>
+                </form>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Current Admins</h3>
+                <div class="user-list" id="adminsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <button class="logout-btn" onclick="logoutAdmin()">🚪 Logout</button>
+
+    <script>
+        // In-memory data storage
+        let events = [
+            {
+                id: 1,
+                name: "Sankranti Festival 2026",
+                date: "2026-01-14",
+                time: "09:00",
+                location: "Community Hall, Klang",
+                description: "Grand celebration of harvest festival",
+                icon: "🪔",
+                registrations: 45
+            }
+        ];
+
+        let galleryPhotos = [
+            {
+                id: 1,
+                title: "Sankranti 2025",
+                description: "Traditional harvest festival celebration",
+                category: "festivals",
+                icon: "🪔"
+            },
+            {
+                id: 2,
+                title: "Cultural Dance Program",
+                description: "Kuchipudi performances",
+                category: "cultural",
+                icon: "🎭"
+            }
+        ];
+
+        let contactMessages = [
+            {
+                id: 1,
+                name: "Priya Sharma",
+                email: "priya@example.com",
+                subject: "Membership Inquiry",
+                message: "I would like to join the association. How can I proceed?",
+                date: new Date().toISOString(),
+                read: false
+            }
+        ];
+
+        let users = {
+            "admin@klangtelugu.org": {
+                name: "Admin User",
+                email: "admin@klangtelugu.org",
+                phone: "+60123456789",
+                isAdmin: true
+            },
+            "member@example.com": {
+                name: "Regular Member",
+                email: "member@example.com",
+                phone: "+60198765432",
+                isAdmin: false
+            }
+        };
+
+        let admins = ["admin@klangtelugu.org"];
+
+        // Initialize dashboard
+        function updateDashboard() {
+            document.getElementById('totalMembers').textContent = Object.keys(users).length;
+            document.getElementById('totalEvents').textContent = events.length;
+            document.getElementById('totalPhotos').textContent = galleryPhotos.length;
+            document.getElementById('unreadMessages').textContent = contactMessages.filter(m => !m.read).length;
+        }
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all nav buttons
+            document.querySelectorAll('.admin-nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Refresh data
+            if (sectionId === 'events') displayEvents();
+            if (sectionId === 'gallery') displayGallery();
+            if (sectionId === 'messages') displayMessages();
+            if (sectionId === 'users') displayUsers();
+            if (sectionId === 'admins') displayAdmins();
+        }
+
+        // Events Management
+        document.getElementById('addEventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newEvent = {
+                id: events.length + 1,
+                name: document.getElementById('eventName').value,
+                date: document.getElementById('eventDate').value,
+                time: document.getElementById('eventTime').value,
+                location: document.getElementById('eventLocation').value,
+                description: document.getElementById('eventDescription').value,
+                icon: document.getElementById('eventIcon').value || '📅',
+                registrations: 0
+            };
+            events.push(newEvent);
+            alert('Event added successfully!');
+            this.reset();
+            displayEvents();
+            updateDashboard();
+        });
+
+        function displayEvents() {
+            const container = document.getElementById('eventsList');
+            container.innerHTML = events.map(event => `
+                <div class="event-card">
+                    <div class="event-info">
+                        <h3>${event.icon} ${event.name}</h3>
+                        <p>📅 ${event.date} at ${event.time}</p>
+                        <p>📍 ${event.location}</p>
+                        <p>👥 ${event.registrations} registrations</p>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn btn-secondary" onclick="editEvent(${event.id})">✏️ Edit</button>
+                        <button class="btn btn-danger" onclick="deleteEvent(${event.id})">🗑️ Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                events = events.filter(e => e.id !== id);
+                displayEvents();
+                updateDashboard();
+                alert('Event deleted successfully!');
+            }
+        }
+
+        // Gallery Management
+        document.getElementById('addPhotoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newPhoto = {
+                id: galleryPhotos.length + 1,
+                title: document.getElementById('photoTitle').value,
+                description: document.getElementById('photoDescription').value,
+                category: document.getElementById('photoCategory').value,
+                icon: document.getElementById('photoIcon').value || '📷'
+            };
+            galleryPhotos.push(newPhoto);
+            alert('Photo added successfully!');
+            this.reset();
+            displayGallery();
+            updateDashboard();
+        });
+
+        function displayGallery() {
+            const container = document.getElementById('galleryList');
+            container.innerHTML = galleryPhotos.map(photo => `
+                <div class="gallery-card">
+                    <div class="gallery-preview">${photo.icon}</div>
+                    <h4>${photo.title}</h4>
+                    <p>${photo.description}</p>
+                    <span class="badge badge-new">${photo.category}</span>
+                    <button class="btn btn-danger" style="margin-top: 1rem;" onclick="deletePhoto(${photo.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deletePhoto(id) {
+            if (confirm('Delete this photo?')) {
+                galleryPhotos = galleryPhotos.filter(p => p.id !== id);
+                displayGallery();
+                updateDashboard();
+                alert('Photo deleted!');
+            }
+        }
+
+        // Messages Management
+        function displayMessages() {
+            const container = document.getElementById('messagesList');
+            if (contactMessages.length === 0) {
+                container.innerHTML = '<div class="card"><p>No messages yet.</p></div>';
+                return;
+            }
+            container.innerHTML = contactMessages.map(msg => `
+                <div class="message-card">
+                    <div class="message-header">
+                        <div class="message-info">
+                            <strong>${msg.name}</strong> (${msg.email})
+                            <p style="color: #888; font-size: 0.9rem; margin-top: 0.3rem;">
+                                Subject: ${msg.subject} | ${new Date(msg.date).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <span class="badge ${msg.read ? 'badge-read' : 'badge-new'}">
+                            ${msg.read ? 'Read' : 'New'}
+                        </span>
+                    </div>
+                    <div class="message-content">${msg.message}</div>
+                    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        ${!msg.read ? `<button class="btn btn-secondary" onclick="markAsRead(${msg.id})">Mark as Read</button>` : ''}
+                        <button class="btn btn-danger" onclick="deleteMessage(${msg.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function markAsRead(id) {
+            const msg = contactMessages.find(m => m.id === id);
+            if (msg) msg.read = true;
+            displayMessages();
+            updateDashboard();
+        }
+
+        function deleteMessage(id) {
+            if (confirm('Delete this message?')) {
+                contactMessages = contactMessages.filter(m => m.id !== id);
+                displayMessages();
+                updateDashboard();
+            }
+        }
+
+        // Users Management
+        function displayUsers() {
+            const container = document.getElementById('usersList');
+            container.innerHTML = Object.values(users).map(user => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <h4>👤 ${user.name} ${user.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</h4>
+                        <p>📧 ${user.email} | 📱 ${user.phone}</p>
+                    </div>
+                    ${!user.isAdmin ? `<button class="btn btn-danger" onclick="deleteUser('${user.email}')">Remove User</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteUser(email) {
+            if (confirm('Remove this user?')) {
+                delete users[email];
+                displayUsers();
+                updateDashboard();
+                alert('User removed!');
+            }
+        }
+
+        // Admin Management
+        document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            
+            if (!users[email]) {
+                alert('User not found! The email must belong to an existing user.');
+                return;
+            }
+            
+            if (admins.includes(email)) {
+                alert('This user is already an admin!');
+                return;
+            }
+            
+            admins.push(email);
+            users[email].isAdmin = true;
+            alert('Admin access granted successfully!');
+            this.reset();
+            displayAdmins();
+        });
+
+        function displayAdmins() {
+            const container = document.getElementById('adminsList');
+            const adminUsers = Object.values(users).filter(u => u.isAdmin);
+            container.innerHTML = adminUsers.map(user => `
+                <div class="user-card">
+                    <div class="user-info">
+                        <h4>👤 ${user.name} <span class="admin-badge">ADMIN</span></h4>
+                        <p>📧 ${user.email} | 📱 ${user.phone}</p>
+                    </div>
+                    ${admins[0] !== user.email ? `<button class="btn btn-danger" onclick="revokeAdmin('${user.email}')">Revoke Access</button>` : '<span style="color: #888;">Primary Admin</span>'}
+                </div>
+            `).join('');
+        }
+
+        function revokeAdmin(email) {
+            if (confirm('Revoke admin access for this user?')) {
+                admins = admins.filter(a => a !== email);
+                users[email].isAdmin = false;
+                displayAdmins();
+                displayUsers();
+                alert('Admin access revoked!');
+            }
+        }
+
+        function logoutAdmin() {
+            if (confirm('Logout from admin panel?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            updateDashboard();
+            displayEvents();
+        });
+    </script>
+</body>
+</html>

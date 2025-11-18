@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klang Telugu Association - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-center a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-center a:hover::after,
+        .nav-center a.active::after {
+            width: 100%;
+        }
+
+        .nav-center a.active {
+            color: #DAA520;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #DAA520;
+            font-weight: 600;
+        }
+
+        .auth-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+        }
+
+        .auth-btn.secondary {
+            background: white;
+            color: #DAA520;
+            border: 2px solid #DAA520;
+        }
+
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #fff9e6 100%);
+        }
+
+        .hero-bg-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="none" stroke="%23DAA520" stroke-width="0.5" opacity="0.1"/></svg>');
+            background-size: 100px 100px;
+            animation: patternMove 20s linear infinite;
+        }
+
+        @keyframes patternMove {
+            from { transform: translate(0, 0); }
+            to { transform: translate(100px, 100px); }
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+            animation: fadeInLeft 1s ease;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-content h1 {
+            font-size: 4.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.6rem;
+            color: #666;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            animation: fadeInRight 1s ease;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-img-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+
+        .hero-img-container::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: 20px;
+            bottom: 20px;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+
+        .hero-img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            box-shadow: 0 5px 25px rgba(218, 165, 32, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(218, 165, 32, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #DAA520;
+            border: 3px solid #DAA520;
+        }
+
+        .btn-secondary:hover {
+            background: #DAA520;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            color: #DAA520;
+            font-size: 2rem;
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+            background: none;
+            border: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+        }
+
+        .modal-footer a {
+            color: #DAA520;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .features-section {
+            padding: 5rem 5%;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.25);
+            border-color: #FFD700;
+        }
+
+        .feature-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            color: #DAA520;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .stats-section {
+            padding: 5rem 5%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.3rem;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 968px) {
+            .hero-section {
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+                padding-top: 100px;
+            }
+            
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+
+            .hero-img-container {
+                width: 350px;
+                height: 350px;
+                margin-top: 2rem;
+            }
+
+            .nav-center {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-center">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="nav-right" id="navRight">
+            <button class="auth-btn" onclick="openSignIn()">Sign In</button>
+            <button class="auth-btn secondary" onclick="openSignUp()">Join Us</button>
+        </div>
+    </nav>
+
+    <div class="modal" id="signInModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome Back!</h2>
+                <button class="close-modal" onclick="closeModal('signInModal')">×</button>
+            </div>
+            <form onsubmit="handleSignIn(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signInEmail" required placeholder="your.email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signInPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="auth-btn" style="width: 100%; margin-top: 1rem;">Sign In</button>
+            </form>
+            <div class="modal-footer">
+                Don't have an account? <a onclick="switchModal('signInModal', 'signUpModal')">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="signUpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Join KTA</h2>
+                <button class="close-modal" onclick="closeModal('signUpModal')">×</button>
+            </div>
+            <form onsubmit="handleSignUp(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signUpName" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signUpEmail" required placeholder="your.email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="signUpPhone" required placeholder="+60 123 456 789">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signUpPassword" required placeholder="Create a password">
+                </div>
+                <button type="submit" class="auth-btn" style="width: 100%; margin-top: 1rem;">Create Account</button>
+            </form>
+            <div class="modal-footer">
+                Already have an account? <a onclick="switchModal('signUpModal', 'signInModal')">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero-section">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-content">
+            <h1>Welcome to Klang Telugu Association</h1>
+            <p>Preserving our rich Telugu heritage and building a vibrant community in the heart of Malaysia.</p>
+            <a href="about.html" class="btn btn-primary">Learn More</a>
+            <a href="contact.html" class="btn btn-secondary">Get Involved</a>
+        </div>
+        <div class="hero-image">
+            <div class="hero-img-container">
+                <div class="hero-img">🪔</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">What We Offer</h2>
+        <p class="section-subtitle">Connecting Telugu families through culture, tradition, and community</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Cultural Programs</h3>
+                <p>Celebrate Telugu festivals, dance, music, and traditional performances that bring our heritage to life.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                <h3>Family Events</h3>
+                <p>Regular gatherings, picnics, and social activities that strengthen bonds within our community.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h3>Telugu Classes</h3>
+                <p>Language and cultural education programs for children and adults to stay connected to our roots.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Welfare Support</h3>
+                <p>Assistance and support for community members during times of need and celebration.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎉</div>
+                <h3>Festival Celebrations</h3>
+                <p>Grand celebrations of Sankranti, Ugadi, Bathukamma, and other important Telugu festivals.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏆</div>
+                <h3>Youth Programs</h3>
+                <p>Sports, competitions, and leadership development opportunities for younger generations.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <h2 class="section-title" style="color: white; margin-bottom: 4rem;">Our Impact</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Active Members</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Events Annually</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Years of Service</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Families Supported</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Building bridges, preserving culture, strengthening community bonds since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        function getToken() {
+            return localStorage.getItem('kta_token');
+        }
+
+        function setToken(token) {
+            localStorage.setItem('kta_token', token);
+        }
+
+        function removeToken() {
+            localStorage.removeItem('kta_token');
+        }
+
+        async function checkLogin() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    updateNavForLoggedInUser(user);
+                } else {
+                    removeToken();
+                }
+            } catch (error) {
+                console.error('Error checking login:', error);
+                removeToken();
+            }
+        }
+
+        function updateNavForLoggedInUser(user) {
+            const navRight = document.getElementById('navRight');
+            navRight.innerHTML = `
+                <div class="user-info">
+                    <span>👤 ${user.name}</span>
+                </div>
+                ${user.isAdmin ? '<a href="admin.html" class="auth-btn secondary">Admin Panel</a>' : ''}
+                <button class="auth-btn secondary" onclick="handleSignOut()">Sign Out</button>
+            `;
+        }
+
+        function openSignIn() {
+            document.getElementById('signInModal').classList.add('active');
+        }
+
+        function openSignUp() {
+            document.getElementById('signUpModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function switchModal(closeId, openId) {
+            closeModal(closeId);
+            document.getElementById(openId).classList.add('active');
+        }
+
+        async function handleSignUp(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('signUpName').value,
+                email: document.getElementById('signUpEmail').value,
+                phone: document.getElementById('signUpPhone').value,
+                password: document.getElementById('signUpPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Account created successfully! You can now sign in.');
+                    closeModal('signUpModal');
+                    e.target.reset();
+                } else {
+                    alert(result.error || 'Error creating account');
+                }
+            } catch (error) {
+                alert('Error creating account. Please try again.');
+            }
+        }
+
+        async function handleSignIn(e) {
+            e.preventDefault();
+            const data = {
+                email: document.getElementById('signInEmail').value,
+                password: document.getElementById('signInPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    setToken(result.token);
+                    alert(`Welcome back, ${result.user.name}!`);
+                    closeModal('signInModal');
+                    updateNavForLoggedInUser(result.user);
+                    e.target.reset();
+                } else {
+                    alert(result.error || 'Invalid credentials');
+                }
+            } catch (error) {
+                alert('Error signing in. Please try again.');
+            }
+        }
+
+        function handleSignOut() {
+            if (confirm('Are you sure you want to sign out?')) {
+                removeToken();
+                location.reload();
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('load', checkLogin);
+    </script>
+</body>
+</html>

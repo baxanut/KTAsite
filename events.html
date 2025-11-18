@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #DAA520;
+        }
+
+        .page-header {
+            padding: 150px 5% 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .events-section {
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            border: 2px solid transparent;
+        }
+
+        .event-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.25);
+            border-color: #FFD700;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .event-card:hover .event-image::before {
+            left: 100%;
+        }
+
+        .event-content {
+            padding: 2rem;
+        }
+
+        .event-date {
+            display: inline-block;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .event-title {
+            font-size: 1.8rem;
+            color: #DAA520;
+            margin-bottom: 1rem;
+        }
+
+        .event-description {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .event-details {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .event-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #555;
+        }
+
+        .event-detail span {
+            font-size: 1.2rem;
+        }
+
+        .event-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .event-btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.4);
+        }
+
+        .past-events {
+            background: white;
+            padding: 80px 5%;
+        }
+
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #DAA520, #FFD700);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .timeline-content {
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 45%;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            border: 5px solid white;
+            box-shadow: 0 0 0 4px rgba(218, 165, 32, 0.2);
+            z-index: 1;
+        }
+
+        .timeline-content h3 {
+            color: #DAA520;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-date {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-content p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .calendar-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .calendar-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .calendar-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(218, 165, 32, 0.2);
+        }
+
+        .calendar-month {
+            font-size: 1.5rem;
+            color: #DAA520;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-event {
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #FFD700;
+            text-align: left;
+        }
+
+        .calendar-event strong {
+            color: #DAA520;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 968px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-content {
+                width: calc(100% - 80px);
+                margin-left: 60px !important;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="events.html" class="active">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>Upcoming Events</h1>
+        <p>Join us in celebrating Telugu culture and traditions</p>
+    </section>
+
+    <section class="events-section">
+        <div class="events-grid">
+            <div class="event-card">
+                <div class="event-image">🪔</div>
+                <div class="event-content">
+                    <span class="event-date">📅 January 14, 2026</span>
+                    <h2 class="event-title">Sankranti Festival</h2>
+                    <p class="event-description">Grand celebration of the harvest festival with traditional Bhogi, kite flying, rangoli competition, and authentic Andhra cuisine.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>9:00 AM - 6:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>Community Hall, Klang</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-image">🎵</div>
+                <div class="event-content">
+                    <span class="event-date">📅 February 20, 2026</span>
+                    <h2 class="event-title">Telugu Music Night</h2>
+                    <p class="event-description">An enchanting evening featuring classical Carnatic music, folk songs, and contemporary Telugu hits by talented local artists.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>7:00 PM - 10:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>Shah Alam Convention Centre</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-image">🌺</div>
+                <div class="event-content">
+                    <span class="event-date">📅 March 30, 2026</span>
+                    <h2 class="event-title">Ugadi Celebrations</h2>
+                    <p class="event-description">Welcome the Telugu New Year with traditional pujas, cultural programs, Ugadi pachadi, and family entertainment.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>8:00 AM - 2:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>Temple Grounds, Klang</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-image">🏆</div>
+                <div class="event-content">
+                    <span class="event-date">📅 April 15, 2026</span>
+                    <h2 class="event-title">Youth Talent Show</h2>
+                    <p class="event-description">Showcase your talents! Dance, singing, drama, and instrumental competitions for youth ages 5-25 with exciting prizes.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>2:00 PM - 8:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>KTA Community Center</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-image">👨‍👩‍👧‍👦</div>
+                <div class="event-content">
+                    <span class="event-date">📅 May 10, 2026</span>
+                    <h2 class="event-title">Family Picnic Day</h2>
+                    <p class="event-description">Fun-filled day with games, sports, food stalls, and activities for the whole family. Bring your loved ones!</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>10:00 AM - 5:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>Taman Tasik Shah Alam</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-image">💃</div>
+                <div class="event-content">
+                    <span class="event-date">📅 September 28, 2026</span>
+                    <h2 class="event-title">Bathukamma Festival</h2>
+                    <p class="event-description">Celebrate the floral festival with colorful flower arrangements, traditional songs, and vibrant dance performances.</p>
+                    <div class="event-details">
+                        <div class="event-detail">
+                            <span>🕐</span>
+                            <span>5:00 PM - 9:00 PM</span>
+                        </div>
+                        <div class="event-detail">
+                            <span>📍</span>
+                            <span>Open Ground, Klang</span>
+                        </div>
+                    </div>
+                    <a href="#" class="event-btn">Register Now →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="calendar-section">
+        <h2 class="section-title">2026 Event Calendar</h2>
+        <p class="section-subtitle">Mark your calendars for these exciting events</p>
+        <div class="calendar-grid">
+            <div class="calendar-card">
+                <div class="calendar-month">January</div>
+                <div class="calendar-event">
+                    <strong>14th</strong> - Sankranti Festival
+                </div>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-month">February</div>
+                <div class="calendar-event">
+                    <strong>20th</strong> - Music Night
+                </div>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-month">March</div>
+                <div class="calendar-event">
+                    <strong>30th</strong> - Ugadi Celebration
+                </div>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-month">April</div>
+                <div class="calendar-event">
+                    <strong>15th</strong> - Youth Talent Show
+                </div>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-month">May</div>
+                <div class="calendar-event">
+                    <strong>10th</strong> - Family Picnic
+                </div>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-month">September</div>
+                <div class="calendar-event">
+                    <strong>28th</strong> - Bathukamma Festival
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="past-events">
+        <h2 class="section-title">Past Events Highlights</h2>
+        <p class="section-subtitle">Memorable moments from our previous celebrations</p>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Diwali Celebration 2025</h3>
+                    <p class="timeline-date">November 2025</p>
+                    <p>Over 400 members gathered for a spectacular Diwali celebration with traditional rangoli, diyas lighting ceremony, and cultural performances.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Annual Sports Day</h3>
+                    <p class="timeline-date">August 2025</p>
+                    <p>Families competed in cricket, volleyball, and traditional games. Great team spirit and camaraderie on display!</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Telugu Language Workshop</h3>
+                    <p class="timeline-date">June 2025</p>
+                    <p>Successful workshop teaching Telugu script and conversation to 50+ children and adults.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Sankranti 2025</h3>
+                    <p class="timeline-date">January 2025</p>
+                    <p>Traditional harvest festival celebrated with bhogi, kite flying, and delicious pongal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Building bridges, preserving culture, strengthening community bonds since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,3 @@
+PORT=3000
+JWT_SECRET=kta-super-secret-key-change-this-in-production-2025
+NODE_ENV=production

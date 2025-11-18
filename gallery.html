@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #DAA520;
+        }
+
+        .page-header {
+            padding: 150px 5% 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .gallery-section {
+            padding: 80px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 2rem;
+            background: white;
+            border: 2px solid #DAA520;
+            border-radius: 25px;
+            color: #DAA520;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s;
+            cursor: pointer;
+            height: 300px;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.3);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            transition: all 0.4s;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 2rem;
+            transform: translateY(100%);
+            transition: all 0.4s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-description {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+        }
+
+        .video-section {
+            padding: 80px 5%;
+            background: white;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .video-card {
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.25);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+
+        .play-button {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .video-card:hover .play-button {
+            transform: scale(1.1);
+        }
+
+        .video-content {
+            padding: 2rem;
+        }
+
+        .video-title {
+            font-size: 1.5rem;
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .stats-banner {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item h3 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 968px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html" class="active">Gallery</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>Photo & Video Gallery</h1>
+        <p>Capturing our beautiful moments and memories</p>
+    </section>
+
+    <section class="gallery-section">
+        <h2 class="section-title">Photo Gallery</h2>
+        <p class="section-subtitle">Browse through our collection of memorable events</p>
+
+        <div class="gallery-filters">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Festivals</button>
+            <button class="filter-btn">Cultural Events</button>
+            <button class="filter-btn">Family Events</button>
+            <button class="filter-btn">Youth Programs</button>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="gallery-image">🪔</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Sankranti 2025</div>
+                    <div class="gallery-description">Traditional harvest festival celebration</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🎭</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Cultural Dance Program</div>
+                    <div class="gallery-description">Kuchipudi and Bharatanatyam performances</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">💐</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Bathukamma Festival</div>
+                    <div class="gallery-description">Colorful floral arrangements and dances</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">👨‍👩‍👧‍👦</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Family Picnic 2025</div>
+                    <div class="gallery-description">Fun day with games and activities</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🎵</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Music Night</div>
+                    <div class="gallery-description">Classical and contemporary performances</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🌺</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Ugadi Celebration</div>
+                    <div class="gallery-description">Telugu New Year festivities</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🏆</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Youth Talent Competition</div>
+                    <div class="gallery-description">Young stars showcasing their skills</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🪷</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Prayer Ceremony</div>
+                    <div class="gallery-description">Community spiritual gathering</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🎪</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Annual Carnival</div>
+                    <div class="gallery-description">Games, food stalls, and entertainment</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">📚</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Telugu Language Class</div>
+                    <div class="gallery-description">Teaching our mother tongue to kids</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🎨</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Rangoli Competition</div>
+                    <div class="gallery-description">Beautiful traditional floor art</div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="gallery-image">🥘</div>
+                <div class="gallery-overlay">
+                    <div class="gallery-title">Food Festival</div>
+                    <div class="gallery-description">Authentic Telugu cuisine showcase</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-banner">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>1000+</h3>
+                <p>Photos Captured</p>
+            </div>
+            <div class="stat-item">
+                <h3>50+</h3>
+                <p>Events Documented</p>
+            </div>
+            <div class="stat-item">
+                <h3>100+</h3>
+                <p>Video Recordings</p>
+            </div>
+            <div class="stat-item">
+                <h3>15</h3>
+                <p>Years of Memories</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <h2 class="section-title">Video Highlights</h2>
+        <p class="section-subtitle">Relive the magic through our video collection</p>
+
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Sankranti 2025 Highlights</h3>
+                    <p class="video-description">Watch the complete coverage of our grand Sankranti celebration with kite flying, traditional games, and cultural programs.</p>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Bathukamma Dance Performance</h3>
+                    <p class="video-description">Beautiful traditional dance performances by our talented women celebrating the floral festival.</p>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Youth Talent Show 2025</h3>
+                    <p class="video-description">Amazing performances from our young stars in dance, music, and drama competitions.</p>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Ugadi Celebration</h3>
+                    <p class="video-description">Telugu New Year celebrations with traditional rituals, cultural programs, and community feast.</p>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">KTA Documentary</h3>
+                    <p class="video-description">Our journey over 15 years - stories, achievements, and the spirit of our Telugu community.</p>
+                </div>
+            </div>
+
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    🎬
+                    <div class="play-button">▶</div>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Cultural Program 2024</h3>
+                    <p class="video-description">Annual cultural extravaganza featuring traditional Telugu music, dance, and theatrical performances.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Building bridges, preserving culture, strengthening community bonds since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

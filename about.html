@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #DAA520;
+        }
+
+        .page-header {
+            padding: 150px 5% 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .about-section {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 5rem;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 400px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            color: #DAA520;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin: 5rem 0;
+        }
+
+        .mv-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #FFD700;
+            transition: all 0.3s;
+        }
+
+        .mv-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.2);
+        }
+
+        .mv-card h3 {
+            font-size: 2rem;
+            color: #DAA520;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mv-card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        .team-section {
+            padding: 80px 5%;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .team-member {
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            padding: 2.5rem;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            border-color: #FFD700;
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.2);
+        }
+
+        .member-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .member-role {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .member-bio {
+            color: #777;
+            line-height: 1.6;
+        }
+
+        .values-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .value-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .value-card h4 {
+            font-size: 1.5rem;
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 968px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>About Our Association</h1>
+        <p>Building a vibrant Telugu community in Malaysia</p>
+    </section>
+
+    <section class="about-section">
+        <div class="about-grid">
+            <div class="about-image">🕉️</div>
+            <div class="about-content">
+                <h2>Our Story</h2>
+                <p>Founded in 2010, the Klang Telugu Association has been the cornerstone of Telugu culture in Malaysia for over a decade. What started as a small gathering of Telugu families has blossomed into a thriving community of over 500 members.</p>
+                <p>We are dedicated to preserving our rich heritage while embracing the multicultural fabric of Malaysian society. Through cultural programs, educational initiatives, and community support, we create a home away from home for Telugu families.</p>
+            </div>
+        </div>
+
+        <div class="about-grid" style="direction: rtl;">
+            <div class="about-image">🎭</div>
+            <div class="about-content" style="direction: ltr;">
+                <h2>What We Do</h2>
+                <p>Our association organizes year-round cultural events, festival celebrations, and educational programs that keep our traditions alive. From teaching Telugu language to children, to hosting grand celebrations of Sankranti and Ugadi, we ensure our heritage thrives.</p>
+                <p>We also provide welfare support to community members, organize family gatherings, and create opportunities for networking and friendship among Telugu families in the Klang Valley.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mission-vision">
+        <div class="mv-card">
+            <h3><span>🎯</span> Our Mission</h3>
+            <p>To unite Telugu families in Malaysia, preserve our cultural heritage, promote Telugu language and traditions, and provide a supportive community network that fosters growth, celebration, and mutual assistance.</p>
+        </div>
+        <div class="mv-card">
+            <h3><span>👁️</span> Our Vision</h3>
+            <p>To be the leading Telugu cultural organization in Malaysia, recognized for excellence in cultural preservation, community engagement, and creating meaningful connections that span generations.</p>
+        </div>
+    </section>
+
+    <section class="values-section">
+        <h2 class="section-title">Our Core Values</h2>
+        <p class="section-subtitle">The principles that guide everything we do</p>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h4>Unity</h4>
+                <p>Bringing Telugu families together as one strong community</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🏺</div>
+                <h4>Heritage</h4>
+                <p>Preserving and celebrating our rich Telugu culture</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">❤️</div>
+                <h4>Compassion</h4>
+                <p>Supporting each other in times of joy and need</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🌟</div>
+                <h4>Excellence</h4>
+                <p>Striving for quality in all our programs and services</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <h2 class="section-title">Leadership Team</h2>
+        <p class="section-subtitle">Meet the dedicated individuals leading our community</p>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-photo">👨‍💼</div>
+                <div class="member-name">Rajesh Kumar</div>
+                <div class="member-role">President</div>
+                <p class="member-bio">Leading the association with 15 years of community service experience</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">👩‍💼</div>
+                <div class="member-name">Lakshmi Devi</div>
+                <div class="member-role">Vice President</div>
+                <p class="member-bio">Passionate about cultural education and youth programs</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">👨‍💼</div>
+                <div class="member-name">Srinivas Reddy</div>
+                <div class="member-role">Secretary</div>
+                <p class="member-bio">Ensuring smooth operations and member communications</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">👩‍💼</div>
+                <div class="member-name">Priya Sharma</div>
+                <div class="member-role">Treasurer</div>
+                <p class="member-bio">Managing finances with transparency and accountability</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">👨‍💼</div>
+                <div class="member-name">Venkat Rao</div>
+                <div class="member-role">Cultural Director</div>
+                <p class="member-bio">Organizing festivals and cultural programs</p>
+            </div>
+            <div class="team-member">
+                <div class="member-photo">👩‍💼</div>
+                <div class="member-name">Anusha Patel</div>
+                <div class="member-role">Youth Coordinator</div>
+                <p class="member-bio">Empowering the next generation of Telugu youth</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Building bridges, preserving culture, strengthening community bonds since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

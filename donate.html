@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #DAA520;
+        }
+
+        .page-header {
+            padding: 150px 5% 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            opacity: 0.95;
+        }
+
+        .donate-intro {
+            padding: 80px 5%;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .donate-intro h2 {
+            font-size: 2.5rem;
+            color: #DAA520;
+            margin-bottom: 1.5rem;
+        }
+
+        .donate-intro p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .donation-options {
+            padding: 80px 5%;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+        }
+
+        .donation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .donation-card {
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .donation-card:hover::before {
+            left: 100%;
+        }
+
+        .donation-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.25);
+            border-color: #FFD700;
+        }
+
+        .donation-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .donation-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .donation-title {
+            font-size: 1.5rem;
+            color: #DAA520;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .donation-description {
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .donate-btn {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .donate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(218, 165, 32, 0.4);
+        }
+
+        .custom-donation {
+            padding: 80px 5%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .donation-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .amount-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .amount-btn {
+            padding: 1rem;
+            border: 2px solid #DAA520;
+            background: white;
+            color: #DAA520;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .amount-btn:hover,
+        .amount-btn.active {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+        }
+
+        .impact-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .impact-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .impact-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .impact-card h3 {
+            font-size: 1.8rem;
+            color: #DAA520;
+            margin-bottom: 1rem;
+        }
+
+        .impact-card p {
+            color: #666;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        .bank-details {
+            padding: 80px 5%;
+            background: white;
+        }
+
+        .bank-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            padding: 3rem;
+            border-radius: 25px;
+            color: white;
+            box-shadow: 0 20px 60px rgba(218, 165, 32, 0.3);
+        }
+
+        .bank-card h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .bank-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .bank-row:last-child {
+            border-bottom: none;
+        }
+
+        .bank-label {
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .bank-value {
+            font-weight: bold;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 968px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .donation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="donate.html" class="active">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>Support Our Mission</h1>
+        <p>Your generosity helps preserve Telugu culture for future generations</p>
+    </section>
+
+    <section class="donate-intro">
+        <h2>Make a Difference Today</h2>
+        <p>Your contributions directly support our cultural programs, educational initiatives, and community welfare activities. Every donation, no matter the size, helps us preserve and promote Telugu heritage in Malaysia.</p>
+    </section>
+
+    <section class="donation-options">
+        <h2 class="section-title">Choose Your Contribution</h2>
+        <p class="section-subtitle">Select a giving level that works for you</p>
+
+        <div class="donation-grid">
+            <div class="donation-card">
+                <div class="donation-icon">🌟</div>
+                <div class="donation-amount">RM 50</div>
+                <h3 class="donation-title">Friend</h3>
+                <p class="donation-description">Support one Telugu language class or contribute to festival supplies</p>
+                <button class="donate-btn" onclick="alert('Thank you! Please use the form below or bank details to complete your donation.')">Donate RM 50</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="donation-icon">💎</div>
+                <div class="donation-amount">RM 100</div>
+                <h3 class="donation-title">Supporter</h3>
+                <p class="donation-description">Help fund a cultural workshop or youth program</p>
+                <button class="donate-btn" onclick="alert('Thank you! Please use the form below or bank details to complete your donation.')">Donate RM 100</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="donation-icon">👑</div>
+                <div class="donation-amount">RM 250</div>
+                <h3 class="donation-title">Champion</h3>
+                <p class="donation-description">Sponsor a family event or support welfare initiatives</p>
+                <button class="donate-btn" onclick="alert('Thank you! Please use the form below or bank details to complete your donation.')">Donate RM 250</button>
+            </div>
+
+            <div class="donation-card">
+                <div class="donation-icon">🏆</div>
+                <div class="donation-amount">RM 500+</div>
+                <h3 class="donation-title">Patron</h3>
+                <p class="donation-description">Major sponsor of festivals and cultural programs</p>
+                <button class="donate-btn" onclick="alert('Thank you! Please use the form below or bank details to complete your donation.')">Donate RM 500+</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="custom-donation">
+        <h2 class="section-title">Custom Donation</h2>
+        <p class="section-subtitle">Choose your own amount</p>
+
+        <form class="donation-form" onsubmit="handleDonation(event)">
+            <div class="form-group">
+                <label>Select Amount (RM)</label>
+                <div class="amount-buttons">
+                    <button type="button" class="amount-btn" onclick="setAmount(50)">50</button>
+                    <button type="button" class="amount-btn" onclick="setAmount(100)">100</button>
+                    <button type="button" class="amount-btn" onclick="setAmount(250)">250</button>
+                    <button type="button" class="amount-btn" onclick="setAmount(500)">500</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Or Enter Custom Amount (RM)</label>
+                <input type="number" id="customAmount" placeholder="Enter amount" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" required placeholder="Your full name">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" required placeholder="your.email@example.com">
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" required placeholder="+60 123 456 789">
+            </div>
+
+            <div class="form-group">
+                <label>Donation Purpose (Optional)</label>
+                <select>
+                    <option value="">General Fund</option>
+                    <option value="education">Educational Programs</option>
+                    <option value="cultural">Cultural Events</option>
+                    <option value="welfare">Community Welfare</option>
+                    <option value="youth">Youth Programs</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Message (Optional)</label>
+                <textarea rows="4" placeholder="Any special message or dedication..."></textarea>
+            </div>
+
+            <button type="submit" class="donate-btn" style="width: 100%; font-size: 1.3rem; padding: 1.5rem;">Submit Donation</button>
+        </form>
+    </section>
+
+    <section class="impact-section">
+        <h2 class="section-title">Your Impact</h2>
+        <p class="section-subtitle">See how your donation makes a difference</p>
+
+        <div class="impact-grid">
+            <div class="impact-card">
+                <div class="impact-icon">📚</div>
+                <h3>Education</h3>
+                <p>Fund Telugu language classes, cultural workshops, and educational materials for 100+ students annually</p>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">🎭</div>
+                <h3>Cultural Programs</h3>
+                <p>Organize festivals, dance performances, music concerts, and traditional celebrations throughout the year</p>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">👨‍👩‍👧‍👦</div>
+                <h3>Community Support</h3>
+                <p>Provide welfare assistance, organize family events, and strengthen community bonds among Telugu families</p>
+            </div>
+
+            <div class="impact-card">
+                <div class="impact-icon">🌱</div>
+                <h3>Youth Development</h3>
+                <p>Create opportunities for young Telugu individuals through leadership programs and talent competitions</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="bank-details">
+        <h2 class="section-title">Bank Transfer Details</h2>
+        <p class="section-subtitle">Prefer direct bank transfer? Use these details</p>
+
+        <div class="bank-card">
+            <h3>💳 Bank Account Information</h3>
+            <div class="bank-info">
+                <div class="bank-row">
+                    <span class="bank-label">Bank Name:</span>
+                    <span class="bank-value">Maybank</span>
+                </div>
+                <div class="bank-row">
+                    <span class="bank-label">Account Name:</span>
+                    <span class="bank-value">Klang Telugu Association</span>
+                </div>
+                <div class="bank-row">
+                    <span class="bank-label">Account Number:</span>
+                    <span class="bank-value">1234 5678 9012</span>
+                </div>
+                <div class="bank-row">
+                    <span class="bank-label">Reference:</span>
+                    <span class="bank-value">DONATION + Your Name</span>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.95rem;">Please email your transfer receipt to info@klangtelugu.org for acknowledgment</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Building bridges, preserving culture, strengthening community bonds since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function setAmount(amount) {
+            document.getElementById('customAmount').value = amount;
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function handleDonation(e) {
+            e.preventDefault();
+            alert('Thank you for your generous donation! We will contact you shortly with payment details and receipt information.');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
