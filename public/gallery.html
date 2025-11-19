@@ -485,8 +485,8 @@
                 <div class="gallery-item" onclick="openLightbox(${item.id})">
                     <span class="type-badge">${item.type === 'video' ? '🎥 Video' : '📷 Photo'}</span>
                     ${item.type === 'video' ? 
-                        `<video class="gallery-video" src="${item.url}" muted></video>` :
-                        `<img class="gallery-image" src="${item.url}" alt="${item.title}" />`
+                        `<video class="gallery-video" src="${item.data}" muted></video>` :
+                        `<img class="gallery-image" src="${item.data}" alt="${item.title}" />`
                     }
                     <div class="gallery-overlay">
                         <div class="gallery-title">${item.title}</div>
