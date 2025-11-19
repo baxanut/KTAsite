@@ -455,45 +455,71 @@
             const container = document.getElementById('galleryContainer');
             
             try {
+                console.log('Fetching gallery from:', `${API_URL}/api/gallery`);
                 const response = await fetch(`${API_URL}/api/gallery`);
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 allItems = await response.json();
+                console.log('Gallery items loaded:', allItems);
 
-                if (allItems.length === 0) {
+                if (!allItems || allItems.length === 0) {
                     container.innerHTML = '<div class="loading">No photos or videos yet. Check back soon!</div>';
                     return;
                 }
 
                 displayGallery(allItems);
             } catch (error) {
-                container.innerHTML = '<div class="loading">Error loading gallery. Please try again later.</div>';
+                console.error('Gallery loading error:', error);
+                container.innerHTML = `<div class="loading">Error loading gallery: ${error.message}<br>Please try again later.</div>`;
             }
         }
 
         function displayGallery(items) {
             const container = document.getElementById('galleryContainer');
             
+            console.log('Displaying gallery with filter:', currentFilter);
+            console.log('Total items:', items.length);
+            
             const filteredItems = currentFilter === 'all' 
                 ? items 
                 : items.filter(item => item.category === currentFilter);
+
+            console.log('Filtered items:', filteredItems.length);
 
             if (filteredItems.length === 0) {
                 container.innerHTML = '<div class="loading">No items in this category yet.</div>';
                 return;
             }
 
-            container.innerHTML = '<div class="gallery-grid">' + filteredItems.map(item => `
-                <div class="gallery-item" onclick="openLightbox(${item.id})">
-                    <span class="type-badge">${item.type === 'video' ? '🎥 Video' : '📷 Photo'}</span>
-                    ${item.type === 'video' ? 
-                        `<video class="gallery-video" src="${item.data}" muted></video>` :
-                        `<img class="gallery-image" src="${item.data}" alt="${item.title}" />`
-                    }
-                    <div class="gallery-overlay">
-                        <div class="gallery-title">${item.title}</div>
-                        <div class="gallery-description">${item.description}</div>
-                    </div>
-                </div>
-            `).join('') + '</div>';
+            try {
+                const galleryHTML = '<div class="gallery-grid">' + filteredItems.map(item => {
+                    console.log('Processing item:', item.id, item.title);
+                    return `
+                        <div class="gallery-item" onclick="openLightbox(${item.id})">
+                            <span class="type-badge">${item.type === 'video' ? '🎥 Video' : '📷 Photo'}</span>
+                            ${item.type === 'video' ? 
+                                `<video class="gallery-video" src="${item.data}" muted></video>` :
+                                `<img class="gallery-image" src="${item.data}" alt="${item.title}" onerror="console.error('Image load error for:', '${item.title}')" />`
+                            }
+                            <div class="gallery-overlay">
+                                <div class="gallery-title">${item.title}</div>
+                                <div class="gallery-description">${item.description}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('') + '</div>';
+                
+                container.innerHTML = galleryHTML;
+                console.log('Gallery displayed successfully');
+            } catch (error) {
+                console.error('Error displaying gallery:', error);
+                container.innerHTML = `<div class="loading">Error displaying items: ${error.message}</div>`;
+            }
         }
 
         function filterGallery(category) {
@@ -518,7 +544,7 @@
             if (item.type === 'video') {
                 content.innerHTML = `
                     <video controls autoplay style="max-width: 100%; max-height: 90vh; border-radius: 10px;">
-                        <source src="${item.url}" type="video/mp4">
+                        <source src="${item.data}" type="${item.mimeType}">
                     </video>
                     <div class="lightbox-info">
                         <h2>${item.title}</h2>
@@ -527,7 +553,7 @@
                 `;
             } else {
                 content.innerHTML = `
-                    <img src="${item.url}" alt="${item.title}" style="max-width: 100%; max-height: 90vh; border-radius: 10px;" />
+                    <img src="${item.data}" alt="${item.title}" style="max-width: 100%; max-height: 90vh; border-radius: 10px;" />
                     <div class="lightbox-info">
                         <h2>${item.title}</h2>
                         <p>${item.description}</p>
