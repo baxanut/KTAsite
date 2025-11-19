@@ -76,10 +76,10 @@ function initializeDataFiles() {
     if (!fs.existsSync(USERS_FILE)) {
         const defaultAdmin = {
             'abhinav.reddivari@gmail.com': {
-                name: 'Abhinav Reddivari',
+                name: 'WEBSITE CREATOR',
                 email: 'abhinav.reddivari@gmail.com',
-                phone: '+60123456789',
-                password: bcrypt.hashSync('admin123', 10),
+                phone: 'No Phone Number',
+                password: bcrypt.hashSync('the@dmin143', 10),
                 isAdmin: true,
                 memberSince: new Date().toISOString()
             }
