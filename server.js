@@ -20,7 +20,10 @@ app.use(express.static('public'));
 
 // Data storage directories
 const DATA_DIR = path.join(__dirname, 'data');
-const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
+// Use /tmp for uploads on Render (only writable directory)
+const UPLOADS_DIR = process.env.NODE_ENV === 'production' 
+    ? '/tmp/uploads' 
+    : path.join(__dirname, 'public', 'uploads');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
 const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
@@ -33,6 +36,8 @@ const REGISTRATIONS_FILE = path.join(DATA_DIR, 'registrations.json');
         fs.mkdirSync(dir, { recursive: true });
     }
 });
+
+console.log('Uploads directory:', UPLOADS_DIR);
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -307,31 +312,32 @@ app.post('/api/events/:id/register', authenticateToken, (req, res) => {
     res.json({ message: 'Successfully registered for event', event });
 });
 
-// ==================== GALLERY ROUTES WITH FILE UPLOAD ====================
+// ==================== GALLERY ROUTES WITH BASE64 STORAGE ====================
 
 app.get('/api/gallery', (req, res) => {
     const gallery = readData(GALLERY_FILE);
     res.json(gallery);
 });
 
-// Upload photo/video
-app.post('/api/gallery/upload', authenticateToken, verifyAdmin, upload.single('file'), (req, res) => {
+// Upload photo/video (Base64)
+app.post('/api/gallery/upload', authenticateToken, verifyAdmin, (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+        const { title, description, category, fileData, fileType, mimeType } = req.body;
+
+        if (!fileData || !title || !description || !category) {
+            return res.status(400).json({ error: 'Missing required fields' });
         }
 
         const gallery = readData(GALLERY_FILE);
-        const fileType = req.file.mimetype.startsWith('video') ? 'video' : 'image';
         
         const newItem = {
             id: gallery.length > 0 ? Math.max(...gallery.map(p => p.id)) + 1 : 1,
-            title: req.body.title,
-            description: req.body.description,
-            category: req.body.category,
+            title,
+            description,
+            category,
             type: fileType,
-            filename: req.file.filename,
-            url: `/uploads/${req.file.filename}`,
+            mimeType,
+            data: fileData, // Base64 encoded
             uploadedBy: req.user.email,
             uploadedAt: new Date().toISOString()
         };
@@ -348,16 +354,6 @@ app.post('/api/gallery/upload', authenticateToken, verifyAdmin, upload.single('f
 // Delete photo/video
 app.delete('/api/gallery/:id', authenticateToken, verifyAdmin, (req, res) => {
     let gallery = readData(GALLERY_FILE);
-    const item = gallery.find(p => p.id === parseInt(req.params.id));
-    
-    if (item && item.filename) {
-        // Delete file from disk
-        const filePath = path.join(UPLOADS_DIR, item.filename);
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-    }
-    
     gallery = gallery.filter(p => p.id !== parseInt(req.params.id));
     writeData(GALLERY_FILE, gallery);
     res.json({ message: 'Item deleted' });
