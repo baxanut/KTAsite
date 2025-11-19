@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
@@ -13,32 +14,67 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static HTML files
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.static('public'));
 
-// Data storage file paths
+// Data storage directories
 const DATA_DIR = path.join(__dirname, 'data');
+const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
 const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
 const MESSAGES_FILE = path.join(DATA_DIR, 'messages.json');
 const REGISTRATIONS_FILE = path.join(DATA_DIR, 'registrations.json');
 
-// Create data directory if it doesn't exist
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-}
+// Create directories if they don't exist
+[DATA_DIR, UPLOADS_DIR].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+});
 
-// Initialize data files with default data
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOADS_DIR);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 50 * 1024 * 1024 // 50MB limit
+    },
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = /jpeg|jpg|png|gif|mp4|mov|avi|webm/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image and video files are allowed!'));
+        }
+    }
+});
+
+// Serve uploaded files
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+// Initialize data files
 function initializeDataFiles() {
-    // Initialize users with default admin
     if (!fs.existsSync(USERS_FILE)) {
         const defaultAdmin = {
             'abhinav.reddivari@gmail.com': {
                 name: 'Abhinav Reddivari',
                 email: 'abhinav.reddivari@gmail.com',
                 phone: '+60123456789',
-                password: bcrypt.hashSync('admin123', 10), // Default password
+                password: bcrypt.hashSync('admin123', 10),
                 isAdmin: true,
                 memberSince: new Date().toISOString()
             }
@@ -46,7 +82,6 @@ function initializeDataFiles() {
         fs.writeFileSync(USERS_FILE, JSON.stringify(defaultAdmin, null, 2));
     }
 
-    // Initialize events
     if (!fs.existsSync(EVENTS_FILE)) {
         const defaultEvents = [
             {
@@ -63,28 +98,14 @@ function initializeDataFiles() {
         fs.writeFileSync(EVENTS_FILE, JSON.stringify(defaultEvents, null, 2));
     }
 
-    // Initialize gallery
     if (!fs.existsSync(GALLERY_FILE)) {
-        const defaultGallery = [
-            {
-                id: 1,
-                title: 'Sankranti 2025',
-                description: 'Traditional harvest festival celebration',
-                category: 'festivals',
-                icon: '🪔',
-                uploadedBy: 'admin',
-                uploadedAt: new Date().toISOString()
-            }
-        ];
-        fs.writeFileSync(GALLERY_FILE, JSON.stringify(defaultGallery, null, 2));
+        fs.writeFileSync(GALLERY_FILE, JSON.stringify([], null, 2));
     }
 
-    // Initialize messages
     if (!fs.existsSync(MESSAGES_FILE)) {
         fs.writeFileSync(MESSAGES_FILE, JSON.stringify([], null, 2));
     }
 
-    // Initialize registrations
     if (!fs.existsSync(REGISTRATIONS_FILE)) {
         fs.writeFileSync(REGISTRATIONS_FILE, JSON.stringify({}, null, 2));
     }
@@ -92,7 +113,7 @@ function initializeDataFiles() {
 
 initializeDataFiles();
 
-// Helper functions to read/write data
+// Helper functions
 function readData(file) {
     try {
         const data = fs.readFileSync(file, 'utf8');
@@ -144,7 +165,6 @@ function verifyAdmin(req, res, next) {
 
 // ==================== AUTH ROUTES ====================
 
-// Sign Up
 app.post('/api/auth/signup', async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
@@ -171,7 +191,6 @@ app.post('/api/auth/signup', async (req, res) => {
     }
 });
 
-// Sign In
 app.post('/api/auth/signin', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -203,7 +222,6 @@ app.post('/api/auth/signin', async (req, res) => {
     }
 });
 
-// Get current user
 app.get('/api/auth/me', authenticateToken, (req, res) => {
     const users = readData(USERS_FILE);
     const user = users[req.user.email];
@@ -222,13 +240,11 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
 
 // ==================== EVENTS ROUTES ====================
 
-// Get all events
 app.get('/api/events', (req, res) => {
     const events = readData(EVENTS_FILE);
     res.json(events);
 });
 
-// Create event (admin only)
 app.post('/api/events', authenticateToken, verifyAdmin, (req, res) => {
     const events = readData(EVENTS_FILE);
     const newEvent = {
@@ -243,7 +259,6 @@ app.post('/api/events', authenticateToken, verifyAdmin, (req, res) => {
     res.json(newEvent);
 });
 
-// Update event (admin only)
 app.put('/api/events/:id', authenticateToken, verifyAdmin, (req, res) => {
     const events = readData(EVENTS_FILE);
     const index = events.findIndex(e => e.id === parseInt(req.params.id));
@@ -257,7 +272,6 @@ app.put('/api/events/:id', authenticateToken, verifyAdmin, (req, res) => {
     res.json(events[index]);
 });
 
-// Delete event (admin only)
 app.delete('/api/events/:id', authenticateToken, verifyAdmin, (req, res) => {
     let events = readData(EVENTS_FILE);
     events = events.filter(e => e.id !== parseInt(req.params.id));
@@ -265,7 +279,6 @@ app.delete('/api/events/:id', authenticateToken, verifyAdmin, (req, res) => {
     res.json({ message: 'Event deleted' });
 });
 
-// Register for event (authenticated users only)
 app.post('/api/events/:id/register', authenticateToken, (req, res) => {
     const events = readData(EVENTS_FILE);
     const registrations = readData(REGISTRATIONS_FILE);
@@ -277,17 +290,14 @@ app.post('/api/events/:id/register', authenticateToken, (req, res) => {
         return res.status(404).json({ error: 'Event not found' });
     }
 
-    // Initialize event registrations if not exists
     if (!registrations[eventId]) {
         registrations[eventId] = [];
     }
 
-    // Check if already registered
     if (registrations[eventId].includes(userEmail)) {
         return res.status(400).json({ error: 'Already registered for this event' });
     }
 
-    // Add registration
     registrations[eventId].push(userEmail);
     event.registrations = registrations[eventId].length;
 
@@ -297,40 +307,64 @@ app.post('/api/events/:id/register', authenticateToken, (req, res) => {
     res.json({ message: 'Successfully registered for event', event });
 });
 
-// ==================== GALLERY ROUTES ====================
+// ==================== GALLERY ROUTES WITH FILE UPLOAD ====================
 
-// Get all gallery photos
 app.get('/api/gallery', (req, res) => {
     const gallery = readData(GALLERY_FILE);
     res.json(gallery);
 });
 
-// Add photo (admin only)
-app.post('/api/gallery', authenticateToken, verifyAdmin, (req, res) => {
-    const gallery = readData(GALLERY_FILE);
-    const newPhoto = {
-        id: gallery.length > 0 ? Math.max(...gallery.map(p => p.id)) + 1 : 1,
-        ...req.body,
-        uploadedBy: req.user.email,
-        uploadedAt: new Date().toISOString()
-    };
-    
-    gallery.push(newPhoto);
-    writeData(GALLERY_FILE, gallery);
-    res.json(newPhoto);
+// Upload photo/video
+app.post('/api/gallery/upload', authenticateToken, verifyAdmin, upload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const gallery = readData(GALLERY_FILE);
+        const fileType = req.file.mimetype.startsWith('video') ? 'video' : 'image';
+        
+        const newItem = {
+            id: gallery.length > 0 ? Math.max(...gallery.map(p => p.id)) + 1 : 1,
+            title: req.body.title,
+            description: req.body.description,
+            category: req.body.category,
+            type: fileType,
+            filename: req.file.filename,
+            url: `/uploads/${req.file.filename}`,
+            uploadedBy: req.user.email,
+            uploadedAt: new Date().toISOString()
+        };
+        
+        gallery.push(newItem);
+        writeData(GALLERY_FILE, gallery);
+        res.json(newItem);
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Error uploading file' });
+    }
 });
 
-// Delete photo (admin only)
+// Delete photo/video
 app.delete('/api/gallery/:id', authenticateToken, verifyAdmin, (req, res) => {
     let gallery = readData(GALLERY_FILE);
+    const item = gallery.find(p => p.id === parseInt(req.params.id));
+    
+    if (item && item.filename) {
+        // Delete file from disk
+        const filePath = path.join(UPLOADS_DIR, item.filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+    
     gallery = gallery.filter(p => p.id !== parseInt(req.params.id));
     writeData(GALLERY_FILE, gallery);
-    res.json({ message: 'Photo deleted' });
+    res.json({ message: 'Item deleted' });
 });
 
 // ==================== CONTACT MESSAGES ROUTES ====================
 
-// Submit contact message
 app.post('/api/contact', (req, res) => {
     const messages = readData(MESSAGES_FILE);
     const newMessage = {
@@ -345,13 +379,11 @@ app.post('/api/contact', (req, res) => {
     res.json({ message: 'Message sent successfully' });
 });
 
-// Get all messages (admin only)
 app.get('/api/contact', authenticateToken, verifyAdmin, (req, res) => {
     const messages = readData(MESSAGES_FILE);
     res.json(messages);
 });
 
-// Mark message as read (admin only)
 app.put('/api/contact/:id/read', authenticateToken, verifyAdmin, (req, res) => {
     const messages = readData(MESSAGES_FILE);
     const message = messages.find(m => m.id === parseInt(req.params.id));
@@ -365,7 +397,6 @@ app.put('/api/contact/:id/read', authenticateToken, verifyAdmin, (req, res) => {
     res.json(message);
 });
 
-// Delete message (admin only)
 app.delete('/api/contact/:id', authenticateToken, verifyAdmin, (req, res) => {
     let messages = readData(MESSAGES_FILE);
     messages = messages.filter(m => m.id !== parseInt(req.params.id));
@@ -373,9 +404,8 @@ app.delete('/api/contact/:id', authenticateToken, verifyAdmin, (req, res) => {
     res.json({ message: 'Message deleted' });
 });
 
-// ==================== USERS ROUTES (Admin only) ====================
+// ==================== USERS ROUTES ====================
 
-// Get all users
 app.get('/api/users', authenticateToken, verifyAdmin, (req, res) => {
     const users = readData(USERS_FILE);
     const userList = Object.values(users).map(u => ({
@@ -388,7 +418,6 @@ app.get('/api/users', authenticateToken, verifyAdmin, (req, res) => {
     res.json(userList);
 });
 
-// Grant admin access
 app.post('/api/users/grant-admin', authenticateToken, verifyAdmin, (req, res) => {
     const { email } = req.body;
     const users = readData(USERS_FILE);
@@ -402,7 +431,6 @@ app.post('/api/users/grant-admin', authenticateToken, verifyAdmin, (req, res) =>
     res.json({ message: 'Admin access granted' });
 });
 
-// Revoke admin access
 app.post('/api/users/revoke-admin', authenticateToken, verifyAdmin, (req, res) => {
     const { email } = req.body;
     const users = readData(USERS_FILE);
@@ -420,7 +448,6 @@ app.post('/api/users/revoke-admin', authenticateToken, verifyAdmin, (req, res) =
     res.json({ message: 'Admin access revoked' });
 });
 
-// Delete user
 app.delete('/api/users/:email', authenticateToken, verifyAdmin, (req, res) => {
     const email = req.params.email;
     
@@ -450,7 +477,7 @@ app.get('/api/stats', authenticateToken, verifyAdmin, (req, res) => {
     });
 });
 
-// Serve static files for HTML pages
+// Serve static files
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -459,5 +486,6 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 KTA Server running on port ${PORT}`);
     console.log(`📧 Default admin: abhinav.reddivari@gmail.com`);
-    console.log(`🔑 Default password: admin123 (please change after first login)`);
+    console.log(`🔑 Default password: admin123`);
+    console.log(`📁 Uploads directory: ${UPLOADS_DIR}`);
 });
