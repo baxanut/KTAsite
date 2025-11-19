@@ -1,166 +1,532 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Klang Telugu Association</title>
     <style>
-        /* ---------- (kept your styling mostly unchanged) ---------- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg,#f5f5f5 0%,#e8e8e8 100%); color: #333; }
-        .admin-header { background: linear-gradient(135deg,#DAA520,#FFD700); color: white; padding: 2rem 5%; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
-        .admin-header h1 { font-size: 2.5rem; margin-bottom: .5rem; }
-        .admin-header p { opacity:.95; font-size:1.1rem; }
-        .admin-nav { background:white; padding:1rem 5%; box-shadow:0 2px 10px rgba(0,0,0,0.05); display:flex; gap:2rem; overflow-x:auto; }
-        .admin-nav button { padding: .8rem 2rem; background:transparent; border:2px solid #e0e0e0; border-radius:25px; cursor:pointer; font-weight:600; color:#666; transition:all .3s; white-space:nowrap; }
-        .admin-nav button.active, .admin-nav button:hover { background: linear-gradient(135deg,#DAA520,#FFD700); color:white; border-color:#DAA520; }
-        .admin-container { padding: 3rem 5%; max-width:1600px; margin:0 auto; }
-        .admin-section { display:none; } .admin-section.active { display:block; animation:fadeIn .3s ease; }
-        @keyframes fadeIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:translateY(0)} }
-        .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem; margin-bottom:3rem; }
-        .stat-card{ background:white; padding:2rem; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.08); border-left:5px solid #DAA520; }
-        .stat-card h3{ color:#666; font-size:1rem; margin-bottom:.5rem; } .stat-card .number{ font-size:3rem; font-weight:bold; color:#DAA520; }
-        .section-title{ font-size:2rem; color:#DAA520; margin-bottom:2rem; display:flex; align-items:center; gap:1rem; }
-        .card{ background:white; padding:2rem; border-radius:20px; box-shadow:0 5px 20px rgba(0,0,0,0.08); margin-bottom:2rem; }
-        .form-group{ margin-bottom:1.5rem; } .form-group label{ display:block; margin-bottom:.5rem; font-weight:600; color:#333; }
-        .form-group input, .form-group textarea, .form-group select{ width:100%; padding:1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:1rem; font-family:inherit; transition:all .3s; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus{ outline:none; border-color:#DAA520; box-shadow:0 0 0 3px rgba(218,165,32,.1); }
-        .form-group textarea{ min-height:120px; resize:vertical; }
-        .btn { padding:1rem 2.5rem; border:none; border-radius:25px; font-size:1rem; font-weight:600; cursor:pointer; transition:all .3s; }
-        .btn-primary{ background:linear-gradient(135deg,#DAA520,#FFD700); color:white; box-shadow:0 5px 20px rgba(218,165,32,.3); } .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(218,165,32,.4); }
-        .btn-danger{ background:#dc3545; color:white; } .btn-danger:hover{ background:#c82333; transform:translateY(-2px); }
-        .btn-secondary{ background:#6c757d; color:white; } .btn-secondary:hover{ background:#5a6268; }
-        .table-container{ overflow-x:auto; } table{ width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; } th{ background:linear-gradient(135deg,#DAA520,#FFD700); color:white; padding:1rem; text-align:left; font-weight:600; } td{ padding:1rem; border-bottom:1px solid #e0e0e0; } tr:hover{ background:#f9f9f9; }
-        .event-card, .gallery-card, .message-card{ background:white; padding:1.5rem; border-radius:15px; box-shadow:0 3px 15px rgba(0,0,0,0.08); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
-        .event-info h3{ color:#DAA520; margin-bottom:.5rem; } .event-info p{ color:#666; margin:0.3rem 0; }
-        .event-actions{ display:flex; gap:1rem; }
-        .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1.5rem; }
-        .gallery-card{ flex-direction:column; text-align:center; } .gallery-preview{ width:100%; height:200px; background:linear-gradient(135deg,#FFD700,#DAA520); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:4rem; margin-bottom:1rem; }
-        .message-card{ flex-direction:column; align-items:flex-start; } .message-header{ display:flex; justify-content:space-between; width:100%; margin-bottom:1rem; } .message-info strong{ color:#DAA520; } .message-content{ background:#f9f9f9; padding:1rem; border-radius:10px; width:100%; margin-top:.5rem; }
-        .badge{ display:inline-block; padding:.3rem 1rem; border-radius:20px; font-size:.85rem; font-weight:600; } .badge-new{ background:#28a745; color:white; } .badge-read{ background:#6c757d; color:white; }
-        .upload-area{ border:3px dashed #DAA520; border-radius:15px; padding:3rem; text-align:center; cursor:pointer; transition:all .3s; background:#fffef8; } .upload-area:hover{ background:#fff9e6; border-color:#FFD700; } .upload-area input[type="file"]{ display:none; }
-        .user-list{ display:grid; gap:1rem; } .user-card{ background:white; padding:1.5rem; border-radius:15px; box-shadow:0 3px 15px rgba(0,0,0,0.08); display:flex; justify-content:space-between; align-items:center; }
-        .user-info h4{ color:#DAA520; margin-bottom:.3rem; } .user-info p{ color:#666; font-size:.9rem; }
-        .admin-badge{ background:linear-gradient(135deg,#DAA520,#FFD700); color:white; padding:.3rem 1rem; border-radius:20px; font-size:.85rem; font-weight:600; margin-left:.5rem; }
-        .logout-btn{ position:fixed; bottom:2rem; right:2rem; background:#dc3545; color:white; padding:1rem 2rem; border:none; border-radius:50px; font-weight:600; cursor:pointer; box-shadow:0 5px 20px rgba(220,53,69,.3); transition:all .3s; } .logout-btn:hover{ transform:translateY(-3px); box-shadow:0 8px 25px rgba(220,53,69,.4); }
-        @media (max-width:768px){ .event-card, .gallery-card, .message-card{ flex-direction:column; } .event-actions{ width:100%; } }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* Simple modal (for login) */
-        .modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:9999; }
-        .modal{ background:white; padding:2rem; border-radius:12px; width:420px; max-width:95%; box-shadow:0 10px 30px rgba(0,0,0,0.25); }
-        .modal h3{ margin-bottom:1rem; color:#333; }
-        .small-muted{ color:#777; font-size:0.9rem; margin-top:0.5rem; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #333;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 2rem 5%;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header p {
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+
+        .admin-nav {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+        }
+
+        .admin-nav button {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .admin-nav button.active,
+        .admin-nav button:hover {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            border-color: #DAA520;
+        }
+
+        .admin-container {
+            padding: 3rem 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #DAA520;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #DAA520;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #DAA520;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #DAA520;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .event-card,
+        .gallery-card,
+        .message-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .event-info h3 {
+            color: #DAA520;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-info p {
+            color: #666;
+            margin: 0.3rem 0;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .gallery-preview {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .message-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .message-info strong {
+            color: #DAA520;
+        }
+
+        .message-content {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-new {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-read {
+            background: #6c757d;
+            color: white;
+        }
+
+        .user-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .user-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info h4 {
+            color: #DAA520;
+            margin-bottom: 0.3rem;
+        }
+
+        .user-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #dc3545;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .event-card,
+            .gallery-card,
+            .message-card {
+                flex-direction: column;
+            }
+
+            .event-actions {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="admin-header">
         <h1>🛠️ Admin Control Panel</h1>
-        <p>Welcome, Admin! Manage your association's content and members</p>
+        <p id="welcomeMessage">Welcome, Admin! Manage your association's content and members</p>
     </div>
 
-    <nav class="admin-nav" id="navBar">
-        <button class="active" onclick="showSection('dashboard', this)">📊 Dashboard</button>
-        <button onclick="showSection('events', this)">📅 Manage Events</button>
-        <button onclick="showSection('gallery', this)">🖼️ Manage Gallery</button>
-        <button onclick="showSection('messages', this)">💬 Contact Messages</button>
-        <button onclick="showSection('users', this)">👥 Manage Users</button>
-        <button onclick="showSection('admins', this)">🔐 Manage Admins</button>
-        <div style="margin-left:auto; display:flex; gap:1rem; align-items:center;">
-            <span id="whoami" style="color:#444; font-weight:600;"></span>
-            <button id="loginBtn" class="btn btn-primary" onclick="openLogin()">Login</button>
-        </div>
+    <nav class="admin-nav">
+        <button class="active" onclick="showSection('dashboard')">📊 Dashboard</button>
+        <button onclick="showSection('events')">📅 Manage Events</button>
+        <button onclick="showSection('gallery')">🖼️ Manage Gallery</button>
+        <button onclick="showSection('messages')">💬 Contact Messages</button>
+        <button onclick="showSection('users')">👥 Manage Users</button>
+        <button onclick="showSection('admins')">🔐 Manage Admins</button>
     </nav>
 
     <div class="admin-container">
-        <!-- Dashboard -->
+        <!-- Dashboard Section -->
         <div id="dashboard" class="admin-section active">
             <h2 class="section-title">📊 Dashboard Overview</h2>
             <div class="stats-grid">
-                <div class="stat-card"><h3>Total Members</h3><div class="number" id="totalMembers">0</div></div>
-                <div class="stat-card"><h3>Upcoming Events</h3><div class="number" id="totalEvents">0</div></div>
-                <div class="stat-card"><h3>Gallery Photos</h3><div class="number" id="totalPhotos">0</div></div>
-                <div class="stat-card"><h3>Unread Messages</h3><div class="number" id="unreadMessages">0</div></div>
+                <div class="stat-card">
+                    <h3>Total Members</h3>
+                    <div class="number" id="totalMembers">-</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Upcoming Events</h3>
+                    <div class="number" id="totalEvents">-</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Gallery Photos</h3>
+                    <div class="number" id="totalPhotos">-</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Unread Messages</h3>
+                    <div class="number" id="unreadMessages">-</div>
+                </div>
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom:1rem;">Quick Actions</h3>
-                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="showSection('events', document.querySelector('[onclick^=\"showSection(\\'events\\'\")'))">+ Add New Event</button>
-                    <button class="btn btn-primary" onclick="showSection('gallery', document.querySelector('[onclick^=\"showSection(\\'gallery\\'\")'))">+ Upload Photos</button>
-                    <button class="btn btn-secondary" onclick="showSection('messages', document.querySelector('[onclick^=\"showSection(\\'messages\\'\")'))">View Messages</button>
+                <h3 style="margin-bottom: 1rem;">Quick Actions</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showSection('events')">+ Add New Event</button>
+                    <button class="btn btn-primary" onclick="showSection('gallery')">+ Upload Photos</button>
+                    <button class="btn btn-secondary" onclick="showSection('messages')">View Messages</button>
                 </div>
             </div>
         </div>
 
-        <!-- Events -->
+        <!-- Events Management Section -->
         <div id="events" class="admin-section">
             <h2 class="section-title">📅 Manage Events</h2>
+            
             <div class="card">
-                <h3 style="margin-bottom:1.5rem;">Add / Edit Event</h3>
+                <h3 style="margin-bottom: 1.5rem;">Add New Event</h3>
                 <form id="addEventForm">
-                    <input type="hidden" id="eventId" />
-                    <div class="form-group"><label>Event Name *</label><input type="text" id="eventName" required placeholder="e.g., Sankranti Festival 2026"></div>
-                    <div class="form-group"><label>Event Date *</label><input type="date" id="eventDate" required></div>
-                    <div class="form-group"><label>Event Time *</label><input type="time" id="eventTime" required></div>
-                    <div class="form-group"><label>Location *</label><input type="text" id="eventLocation" required placeholder="e.g., Community Hall, Klang"></div>
-                    <div class="form-group"><label>Description *</label><textarea id="eventDescription" required placeholder="Describe the event..."></textarea></div>
-                    <div class="form-group"><label>Event Icon (emoji)</label><input type="text" id="eventIcon" placeholder="🪔" maxlength="2"></div>
-                    <button type="submit" class="btn btn-primary" id="eventSubmitBtn">Create Event</button>
-                    <button type="button" class="btn btn-secondary" id="eventCancelEdit" style="display:none;margin-left:1rem;">Cancel Edit</button>
+                    <div class="form-group">
+                        <label>Event Name *</label>
+                        <input type="text" id="eventName" required placeholder="e.g., Sankranti Festival 2026">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Time *</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" id="eventLocation" required placeholder="e.g., Community Hall, Klang">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="eventDescription" required placeholder="Describe the event..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Icon (emoji)</label>
+                        <input type="text" id="eventIcon" placeholder="🪔" maxlength="2">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
                 </form>
             </div>
 
-            <div style="margin-top:3rem;">
-                <h3 style="margin-bottom:1.5rem;">Existing Events</h3>
-                <div id="eventsList"></div>
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Existing Events</h3>
+                <div id="eventsList" class="loading">Loading events...</div>
             </div>
         </div>
 
-        <!-- Gallery -->
+        <!-- Gallery Management Section -->
         <div id="gallery" class="admin-section">
             <h2 class="section-title">🖼️ Manage Gallery</h2>
+            
             <div class="card">
-                <h3 style="margin-bottom:1.5rem;">Add New Photo</h3>
+                <h3 style="margin-bottom: 1.5rem;">Add New Photo</h3>
                 <form id="addPhotoForm">
-                    <div class="form-group"><label>Photo Title *</label><input type="text" id="photoTitle" required placeholder="e.g., Sankranti 2025"></div>
-                    <div class="form-group"><label>Description *</label><input type="text" id="photoDescription" required placeholder="Brief description"></div>
-                    <div class="form-group"><label>Category *</label><select id="photoCategory" required><option value="">Select Category</option><option value="festivals">Festivals</option><option value="cultural">Cultural Events</option><option value="family">Family Events</option><option value="youth">Youth Programs</option></select></div>
-                    <div class="form-group"><label>Photo Icon (emoji)</label><input type="text" id="photoIcon" placeholder="🪔" maxlength="2"></div>
+                    <div class="form-group">
+                        <label>Photo Title *</label>
+                        <input type="text" id="photoTitle" required placeholder="e.g., Sankranti 2025">
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <input type="text" id="photoDescription" required placeholder="Brief description">
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="photoCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="festivals">Festivals</option>
+                            <option value="cultural">Cultural Events</option>
+                            <option value="family">Family Events</option>
+                            <option value="youth">Youth Programs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Photo Icon (emoji)</label>
+                        <input type="text" id="photoIcon" placeholder="🪔" maxlength="2">
+                    </div>
                     <button type="submit" class="btn btn-primary">Add Photo</button>
                 </form>
             </div>
 
-            <div style="margin-top:3rem;">
-                <h3 style="margin-bottom:1.5rem;">Gallery Photos</h3>
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Gallery Photos</h3>
                 <div class="gallery-grid" id="galleryList"></div>
             </div>
         </div>
 
-        <!-- Messages -->
+        <!-- Messages Section -->
         <div id="messages" class="admin-section">
             <h2 class="section-title">💬 Contact Messages</h2>
-            <div id="messagesList"></div>
+            <div id="messagesList" class="loading">Loading messages...</div>
         </div>
 
-        <!-- Users -->
+        <!-- Users Management Section -->
         <div id="users" class="admin-section">
             <h2 class="section-title">👥 Manage Users</h2>
             <div class="user-list" id="usersList"></div>
         </div>
 
-        <!-- Admins -->
+        <!-- Admins Management Section -->
         <div id="admins" class="admin-section">
             <h2 class="section-title">🔐 Manage Admins</h2>
+            
             <div class="card">
-                <h3 style="margin-bottom:1.5rem;">Add New Admin</h3>
+                <h3 style="margin-bottom: 1.5rem;">Add New Admin</h3>
                 <form id="addAdminForm">
-                    <div class="form-group"><label>Admin Email *</label><input type="email" id="adminEmail" required placeholder="Enter user's email"></div>
+                    <div class="form-group">
+                        <label>Admin Email *</label>
+                        <input type="email" id="adminEmail" required placeholder="Enter user's email">
+                    </div>
                     <button type="submit" class="btn btn-primary">Grant Admin Access</button>
                 </form>
             </div>
 
-            <div style="margin-top:3rem;">
-                <h3 style="margin-bottom:1.5rem;">Current Admins</h3>
+            <div style="margin-top: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Current Admins</h3>
                 <div class="user-list" id="adminsList"></div>
             </div>
         </div>
@@ -168,154 +534,107 @@
 
     <button class="logout-btn" onclick="logoutAdmin()">🚪 Logout</button>
 
-    <!-- Simple Login Modal -->
-    <div class="modal-backdrop" id="loginModal">
-        <div class="modal">
-            <h3>Admin Login</h3>
-            <form id="loginForm">
-                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" required></div>
-                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" required></div>
-                <div style="display:flex; gap:1rem; align-items:center;">
-                    <button type="submit" class="btn btn-primary">Sign In</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeLogin()">Close</button>
-                </div>
-                <p class="small-muted">Default admin: abhinav.reddivari@gmail.com / admin123</p>
-            </form>
-        </div>
-    </div>
-
     <script>
-        // ----------------- Config -----------------
-        const API_BASE = ''; // same origin
-        const getToken = () => localStorage.getItem('token');
-        const authHeader = () => ({ 'Content-Type': 'application/json', ...(getToken() ? { 'Authorization': 'Bearer ' + getToken() } : {}) });
+        const API_URL = window.location.origin;
 
-        // ----------------- UI helpers -----------------
-        function showSection(sectionId, btn) {
-            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-
-            document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+        function getToken() {
+            return localStorage.getItem('kta_token');
         }
 
-        function openLogin() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-        function closeLogin() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-
-        async function checkAuthAndSetupUI() {
+        async function checkAdminAccess() {
             const token = getToken();
-            const loginBtn = document.getElementById('loginBtn');
-            const whoami = document.getElementById('whoami');
-
             if (!token) {
-                whoami.textContent = '';
-                loginBtn.textContent = 'Login';
-                return;
+                alert('Please sign in first!');
+                window.location.href = 'index.html';
+                return false;
             }
 
-            // verify token by calling /api/auth/me
             try {
-                const res = await fetch(API_BASE + '/api/auth/me', { headers: authHeader() });
-                if (!res.ok) throw new Error('not auth');
-                const user = await res.json();
-                whoami.textContent = user.name || user.email;
-                loginBtn.textContent = 'Profile';
-                // If token valid, fetch initial data
-                await loadAllData();
-            } catch (err) {
-                // token invalid -> clear
-                localStorage.removeItem('token');
-                whoami.textContent = '';
-                loginBtn.textContent = 'Login';
-            }
-        }
-
-        // login flow
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            try {
-                const res = await fetch(API_BASE + '/api/auth/signin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                const response = await fetch(`${API_URL}/api/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                const data = await res.json();
-                if (!res.ok) return alert(data.error || 'Login failed');
-                localStorage.setItem('token', data.token);
-                closeLogin();
-                await checkAuthAndSetupUI();
-                alert('Login successful');
-            } catch (err) {
-                console.error(err);
-                alert('Login error');
-            }
-        });
 
-        // logout
-        function logoutAdmin() {
-            if (confirm('Logout from admin panel?')) {
-                localStorage.removeItem('token');
-                document.getElementById('whoami').textContent = '';
-                document.getElementById('loginBtn').textContent = 'Login';
-                // return to dashboard
-                showSection('dashboard', document.querySelector('.admin-nav button'));
+                if (!response.ok) {
+                    throw new Error('Unauthorized');
+                }
+
+                const user = await response.json();
+                
+                if (!user.isAdmin) {
+                    alert('You do not have admin access!');
+                    window.location.href = 'index.html';
+                    return false;
+                }
+
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${user.name}! Manage your association's content and members`;
+                return true;
+            } catch (error) {
+                alert('Session expired. Please sign in again.');
+                window.location.href = 'index.html';
+                return false;
             }
         }
 
-        // ----------------- Data loaders -----------------
-        async function loadStats() {
-            try {
-                const res = await fetch(API_BASE + '/api/stats', { headers: authHeader() });
-                if (!res.ok) {
-                    // if not authorized, clear UI but don't break
-                    const error = await res.json().catch(()=>({}));
-                    return;
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const token = getToken();
+            const options = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-                const stats = await res.json();
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Request failed');
+            }
+
+            return response.json();
+        }
+
+        async function updateDashboard() {
+            try {
+                const stats = await apiCall('/api/stats');
                 document.getElementById('totalMembers').textContent = stats.totalMembers;
                 document.getElementById('totalEvents').textContent = stats.totalEvents;
                 document.getElementById('totalPhotos').textContent = stats.totalPhotos;
                 document.getElementById('unreadMessages').textContent = stats.unreadMessages;
-            } catch (err) { console.error('loadStats', err); }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
         }
 
-        // EVENTS
-        async function loadEvents() {
-            try {
-                const res = await fetch(API_BASE + '/api/events');
-                const events = await res.json();
-                const container = document.getElementById('eventsList');
-                if (!events || events.length === 0) {
-                    container.innerHTML = '<div class="card"><p>No events yet.</p></div>';
-                    return;
-                }
-                container.innerHTML = events.map(ev => `
-                    <div class="event-card" data-id="${ev.id}">
-                        <div class="event-info">
-                            <h3>${ev.icon || '📅'} ${ev.name}</h3>
-                            <p>📅 ${ev.date} at ${ev.time}</p>
-                            <p>📍 ${ev.location}</p>
-                            <p>👥 ${ev.registrations || 0} registrations</p>
-                        </div>
-                        <div class="event-actions">
-                            <button class="btn btn-secondary" onclick="startEditEvent(${ev.id})">✏️ Edit</button>
-                            <button class="btn btn-danger" onclick="deleteEvent(${ev.id})">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) { console.error('loadEvents', err); }
+        function showSection(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.admin-nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionId === 'events') loadEvents();
+            if (sectionId === 'gallery') loadGallery();
+            if (sectionId === 'messages') loadMessages();
+            if (sectionId === 'users') loadUsers();
+            if (sectionId === 'admins') loadAdmins();
         }
 
+        // Events Management
         document.getElementById('addEventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const id = document.getElementById('eventId').value;
-            const payload = {
+            
+            const eventData = {
                 name: document.getElementById('eventName').value,
                 date: document.getElementById('eventDate').value,
                 time: document.getElementById('eventTime').value,
@@ -325,287 +644,286 @@
             };
 
             try {
-                if (id) {
-                    // update
-                    const res = await fetch(API_BASE + '/api/events/' + id, {
-                        method: 'PUT',
-                        headers: authHeader(),
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.error || 'Update failed');
-                    alert('Event updated');
-                } else {
-                    // create
-                    const res = await fetch(API_BASE + '/api/events', {
-                        method: 'POST',
-                        headers: authHeader(),
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await res.json();
-                    if (!res.ok) throw new Error(data.error || 'Create failed');
-                    alert('Event created');
-                }
-                resetEventForm();
-                await loadEvents();
-                await loadStats();
-            } catch (err) {
-                handleApiError(err);
+                await apiCall('/api/events', 'POST', eventData);
+                alert('Event added successfully!');
+                this.reset();
+                loadEvents();
+                updateDashboard();
+            } catch (error) {
+                alert('Error adding event: ' + error.message);
             }
         });
 
-        function resetEventForm() {
-            document.getElementById('eventId').value = '';
-            document.getElementById('addEventForm').reset();
-            document.getElementById('eventSubmitBtn').textContent = 'Create Event';
-            document.getElementById('eventCancelEdit').style.display = 'none';
-        }
-        document.getElementById('eventCancelEdit').addEventListener('click', resetEventForm);
-
-        async function startEditEvent(id) {
+        async function loadEvents() {
+            const container = document.getElementById('eventsList');
+            container.innerHTML = '<div class="loading">Loading events...</div>';
+            
             try {
-                const res = await fetch(API_BASE + '/api/events');
-                const events = await res.json();
-                const ev = events.find(x => x.id === id);
-                if (!ev) return alert('Event not found');
-                document.getElementById('eventId').value = ev.id;
-                document.getElementById('eventName').value = ev.name;
-                document.getElementById('eventDate').value = ev.date;
-                document.getElementById('eventTime').value = ev.time;
-                document.getElementById('eventLocation').value = ev.location;
-                document.getElementById('eventDescription').value = ev.description;
-                document.getElementById('eventIcon').value = ev.icon;
-                document.getElementById('eventSubmitBtn').textContent = 'Save Changes';
-                document.getElementById('eventCancelEdit').style.display = 'inline-block';
-                // show events section if not visible
-                showSection('events', document.querySelector('[onclick*="showSection(\\'events\\'"]') || null);
-            } catch (err) { console.error('startEditEvent', err); }
+                const events = await apiCall('/api/events');
+                
+                if (events.length === 0) {
+                    container.innerHTML = '<div class="card"><p>No events yet.</p></div>';
+                    return;
+                }
+
+                container.innerHTML = events.map(event => `
+                    <div class="event-card">
+                        <div class="event-info">
+                            <h3>${event.icon} ${event.name}</h3>
+                            <p>📅 ${event.date} at ${event.time}</p>
+                            <p>📍 ${event.location}</p>
+                            <p>👥 ${event.registrations || 0} registrations</p>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-danger" onclick="deleteEvent(${event.id})">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = '<div class="card"><p>Error loading events</p></div>';
+            }
         }
 
         async function deleteEvent(id) {
             if (!confirm('Are you sure you want to delete this event?')) return;
+            
             try {
-                const res = await fetch(API_BASE + '/api/events/' + id, { method: 'DELETE', headers: authHeader() });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Delete failed');
-                alert('Event deleted');
-                await loadEvents();
-                await loadStats();
-            } catch (err) {
-                handleApiError(err);
+                await apiCall(`/api/events/${id}`, 'DELETE');
+                alert('Event deleted successfully!');
+                loadEvents();
+                updateDashboard();
+            } catch (error) {
+                alert('Error deleting event: ' + error.message);
             }
         }
 
-        // GALLERY
-        async function loadGallery() {
-            try {
-                const res = await fetch(API_BASE + '/api/gallery');
-                const gallery = await res.json();
-                const container = document.getElementById('galleryList');
-                if (!gallery || gallery.length === 0) { container.innerHTML = '<div class="card"><p>No photos yet.</p></div>'; return; }
-                container.innerHTML = gallery.map(p => `
-                    <div class="gallery-card" data-id="${p.id}">
-                        <div class="gallery-preview">${p.icon || '📷'}</div>
-                        <h4>${p.title}</h4>
-                        <p>${p.description}</p>
-                        <span class="badge badge-new">${p.category}</span>
-                        <button class="btn btn-danger" style="margin-top:1rem;" onclick="deletePhoto(${p.id})">Delete</button>
-                    </div>
-                `).join('');
-            } catch (err) { console.error('loadGallery', err); }
-        }
-
+        // Gallery Management
         document.getElementById('addPhotoForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const payload = {
+            
+            const photoData = {
                 title: document.getElementById('photoTitle').value,
                 description: document.getElementById('photoDescription').value,
                 category: document.getElementById('photoCategory').value,
                 icon: document.getElementById('photoIcon').value || '📷'
             };
+
             try {
-                const res = await fetch(API_BASE + '/api/gallery', {
-                    method: 'POST',
-                    headers: authHeader(),
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Add photo failed');
-                alert('Photo added');
+                await apiCall('/api/gallery', 'POST', photoData);
+                alert('Photo added successfully!');
                 this.reset();
-                await loadGallery();
-                await loadStats();
-            } catch (err) { handleApiError(err); }
+                loadGallery();
+                updateDashboard();
+            } catch (error) {
+                alert('Error adding photo: ' + error.message);
+            }
         });
+
+        async function loadGallery() {
+            const container = document.getElementById('galleryList');
+            container.innerHTML = '<div class="loading">Loading gallery...</div>';
+            
+            try {
+                const photos = await apiCall('/api/gallery');
+                
+                if (photos.length === 0) {
+                    container.innerHTML = '<div class="card"><p>No photos yet.</p></div>';
+                    return;
+                }
+
+                container.innerHTML = photos.map(photo => `
+                    <div class="gallery-card">
+                        <div class="gallery-preview">${photo.icon}</div>
+                        <h4>${photo.title}</h4>
+                        <p>${photo.description}</p>
+                        <span class="badge badge-new">${photo.category}</span>
+                        <button class="btn btn-danger" style="margin-top: 1rem;" onclick="deletePhoto(${photo.id})">Delete</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = '<div class="card"><p>Error loading gallery</p></div>';
+            }
+        }
 
         async function deletePhoto(id) {
             if (!confirm('Delete this photo?')) return;
+            
             try {
-                const res = await fetch(API_BASE + '/api/gallery/' + id, { method: 'DELETE', headers: authHeader() });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Delete failed');
-                alert('Photo deleted');
-                await loadGallery();
-                await loadStats();
-            } catch (err) { handleApiError(err); }
+                await apiCall(`/api/gallery/${id}`, 'DELETE');
+                alert('Photo deleted!');
+                loadGallery();
+                updateDashboard();
+            } catch (error) {
+                alert('Error deleting photo: ' + error.message);
+            }
         }
 
-        // MESSAGES
+        // Messages Management
         async function loadMessages() {
+            const container = document.getElementById('messagesList');
+            container.innerHTML = '<div class="loading">Loading messages...</div>';
+            
             try {
-                const res = await fetch(API_BASE + '/api/contact', { headers: authHeader() });
-                if (!res.ok) {
-                    document.getElementById('messagesList').innerHTML = '<div class="card"><p>No access to messages (login required).</p></div>';
+                const messages = await apiCall('/api/contact');
+                
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="card"><p>No messages yet.</p></div>';
                     return;
                 }
-                const messages = await res.json();
-                const container = document.getElementById('messagesList');
-                if (!messages || messages.length === 0) { container.innerHTML = '<div class="card"><p>No messages yet.</p></div>'; return; }
-                container.innerHTML = messages.map(m => `
+
+                container.innerHTML = messages.map(msg => `
                     <div class="message-card">
                         <div class="message-header">
                             <div class="message-info">
-                                <strong>${m.name}</strong> (${m.email})
-                                <p style="color:#888; font-size:.9rem; margin-top:.3rem;">Subject: ${m.subject} | ${new Date(m.date).toLocaleDateString()}</p>
+                                <strong>${msg.name}</strong> (${msg.email})
+                                <p style="color: #888; font-size: 0.9rem; margin-top: 0.3rem;">
+                                    Subject: ${msg.subject} | ${new Date(msg.date).toLocaleDateString()}
+                                </p>
                             </div>
-                            <span class="badge ${m.read ? 'badge-read' : 'badge-new'}">${m.read ? 'Read' : 'New'}</span>
+                            <span class="badge ${msg.read ? 'badge-read' : 'badge-new'}">
+                                ${msg.read ? 'Read' : 'New'}
+                            </span>
                         </div>
-                        <div class="message-content">${m.message}</div>
-                        <div style="margin-top:1rem; display:flex; gap:1rem;">
-                            ${!m.read ? `<button class="btn btn-secondary" onclick="markAsRead(${m.id})">Mark as Read</button>` : ''}
-                            <button class="btn btn-danger" onclick="deleteMessage(${m.id})">Delete</button>
+                        <div class="message-content">${msg.message}</div>
+                        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                            ${!msg.read ? `<button class="btn btn-secondary" onclick="markAsRead(${msg.id})">Mark as Read</button>` : ''}
+                            <button class="btn btn-danger" onclick="deleteMessage(${msg.id})">Delete</button>
                         </div>
                     </div>
                 `).join('');
-            } catch (err) { console.error('loadMessages', err); }
+            } catch (error) {
+                container.innerHTML = '<div class="card"><p>Error loading messages</p></div>';
+            }
         }
 
         async function markAsRead(id) {
             try {
-                const res = await fetch(API_BASE + '/api/contact/' + id + '/read', { method: 'PUT', headers: authHeader() });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Mark read failed');
-                await loadMessages(); await loadStats();
-            } catch (err) { handleApiError(err); }
+                await apiCall(`/api/contact/${id}/read`, 'PUT');
+                loadMessages();
+                updateDashboard();
+            } catch (error) {
+                alert('Error marking message as read: ' + error.message);
+            }
         }
 
         async function deleteMessage(id) {
             if (!confirm('Delete this message?')) return;
+            
             try {
-                const res = await fetch(API_BASE + '/api/contact/' + id, { method: 'DELETE', headers: authHeader() });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Delete failed');
-                await loadMessages(); await loadStats();
-            } catch (err) { handleApiError(err); }
+                await apiCall(`/api/contact/${id}`, 'DELETE');
+                alert('Message deleted!');
+                loadMessages();
+                updateDashboard();
+            } catch (error) {
+                alert('Error deleting message: ' + error.message);
+            }
         }
 
-        // USERS & ADMINS
+        // Users Management
         async function loadUsers() {
+            const container = document.getElementById('usersList');
+            container.innerHTML = '<div class="loading">Loading users...</div>';
+            
             try {
-                const res = await fetch(API_BASE + '/api/users', { headers: authHeader() });
-                if (!res.ok) { document.getElementById('usersList').innerHTML = '<div class="card"><p>Login as admin to view users.</p></div>'; return; }
-                const users = await res.json();
-                document.getElementById('usersList').innerHTML = users.map(u => `
+                const users = await apiCall('/api/users');
+                
+                container.innerHTML = users.map(user => `
                     <div class="user-card">
                         <div class="user-info">
-                            <h4>👤 ${u.name} ${u.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</h4>
-                            <p>📧 ${u.email} | 📱 ${u.phone || '-'}</p>
+                            <h4>👤 ${user.name} ${user.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}</h4>
+                            <p>📧 ${user.email} | 📱 ${user.phone}</p>
                         </div>
-                        ${!u.isAdmin ? `<button class="btn btn-danger" onclick="deleteUser('${u.email.replace("'", "\\'")}')">Remove User</button>` : '<span style="color:#888;">Primary/Admin</span>'}
+                        ${!user.isAdmin && user.email !== 'abhinav.reddivari@gmail.com' ? 
+                            `<button class="btn btn-danger" onclick="deleteUser('${user.email}')">Remove User</button>` : 
+                            ''}
                     </div>
                 `).join('');
-            } catch (err) { console.error('loadUsers', err); }
+            } catch (error) {
+                container.innerHTML = '<div class="card"><p>Error loading users</p></div>';
+            }
         }
 
         async function deleteUser(email) {
             if (!confirm('Remove this user?')) return;
+            
             try {
-                const res = await fetch(API_BASE + '/api/users/' + encodeURIComponent(email), { method: 'DELETE', headers: authHeader() });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Delete failed');
-                alert('User removed');
-                await loadUsers(); await loadStats();
-            } catch (err) { handleApiError(err); }
+                await apiCall(`/api/users/${email}`, 'DELETE');
+                alert('User removed!');
+                loadUsers();
+                updateDashboard();
+            } catch (error) {
+                alert('Error removing user: ' + error.message);
+            }
         }
 
-        // Admins
+        // Admin Management
         document.getElementById('addAdminForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const email = document.getElementById('adminEmail').value;
+            
             try {
-                const res = await fetch(API_BASE + '/api/users/grant-admin', {
-                    method: 'POST',
-                    headers: authHeader(),
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Grant failed');
-                alert('Admin access granted');
+                await apiCall('/api/users/grant-admin', 'POST', { email });
+                alert('Admin access granted successfully!');
                 this.reset();
-                await loadAdmins(); await loadUsers();
-            } catch (err) { handleApiError(err); }
+                loadAdmins();
+                loadUsers();
+            } catch (error) {
+                alert('Error granting admin access: ' + error.message);
+            }
         });
 
         async function loadAdmins() {
+            const container = document.getElementById('adminsList');
+            container.innerHTML = '<div class="loading">Loading admins...</div>';
+            
             try {
-                const res = await fetch(API_BASE + '/api/users', { headers: authHeader() });
-                if (!res.ok) { document.getElementById('adminsList').innerHTML = '<div class="card"><p>Login as admin to view admins.</p></div>'; return; }
-                const users = await res.json();
-                const adminUsers = users.filter(u => u.isAdmin);
-                document.getElementById('adminsList').innerHTML = adminUsers.map(user => `
+                const users = await apiCall('/api/users');
+                const admins = users.filter(u => u.isAdmin);
+                
+                container.innerHTML = admins.map(user => `
                     <div class="user-card">
                         <div class="user-info">
                             <h4>👤 ${user.name} <span class="admin-badge">ADMIN</span></h4>
-                            <p>📧 ${user.email} | 📱 ${user.phone || '-'}</p>
+                            <p>📧 ${user.email} | 📱 ${user.phone}</p>
                         </div>
-                        ${user.email !== 'abhinav.reddivari@gmail.com' ? `<button class="btn btn-danger" onclick="revokeAdmin('${user.email.replace("'", "\\'")}')">Revoke Access</button>` : '<span style="color:#888;">Primary Admin</span>'}
+                        ${user.email !== 'abhinav.reddivari@gmail.com' ? 
+                            `<button class="btn btn-danger" onclick="revokeAdmin('${user.email}')">Revoke Access</button>` : 
+                            '<span style="color: #888;">Primary Admin</span>'}
                     </div>
                 `).join('');
-            } catch (err) { console.error('loadAdmins', err); }
+            } catch (error) {
+                container.innerHTML = '<div class="card"><p>Error loading admins</p></div>';
+            }
         }
 
         async function revokeAdmin(email) {
             if (!confirm('Revoke admin access for this user?')) return;
+            
             try {
-                const res = await fetch(API_BASE + '/api/users/revoke-admin', {
-                    method: 'POST',
-                    headers: authHeader(),
-                    body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Revoke failed');
-                alert('Admin revoked');
-                await loadAdmins(); await loadUsers();
-            } catch (err) { handleApiError(err); }
+                await apiCall('/api/users/revoke-admin', 'POST', { email });
+                alert('Admin access revoked!');
+                loadAdmins();
+                loadUsers();
+            } catch (error) {
+                alert('Error revoking admin access: ' + error.message);
+            }
         }
 
-        // load everything that requires auth (safe if not logged in)
-        async function loadAllData() {
-            await Promise.allSettled([loadStats(), loadEvents(), loadGallery(), loadMessages(), loadUsers(), loadAdmins()]);
-        }
-
-        // API error handler
-        function handleApiError(err) {
-            console.error(err);
-            const msg = (err && err.message) ? err.message : 'Request failed';
-            if (msg.toLowerCase().includes('token') || msg.toLowerCase().includes('auth')) {
-                localStorage.removeItem('token');
-                alert('Authentication required. Please login again.');
-                openLogin();
-            } else {
-                alert(msg);
+        function logoutAdmin() {
+            if (confirm('Logout from admin panel?')) {
+                window.location.href = 'index.html';
             }
         }
 
         // Initialize on load
         window.addEventListener('load', async () => {
-            await checkAuthAndSetupUI();
-            await loadEvents();
-            await loadGallery();
-            // Dashboard stats updated by checkAuthAndSetupUI if authenticated
-            await loadStats();
+            const hasAccess = await checkAdminAccess();
+            if (hasAccess) {
+                await updateDashboard();
+                await loadEvents();
+            }
         });
-
     </script>
 </body>
 </html>
