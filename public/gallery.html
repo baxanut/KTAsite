@@ -203,7 +203,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.4s;
             cursor: pointer;
-            height: 300px;
+            background: white;
         }
 
         .gallery-item:hover {
@@ -211,19 +211,11 @@
             box-shadow: 0 20px 50px rgba(218, 165, 32, 0.3);
         }
 
-        .gallery-image {
+        .gallery-image,
+        .gallery-video {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #FFD700, #DAA520);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            transition: all 0.4s;
-        }
-
-        .gallery-item:hover .gallery-image {
-            transform: scale(1.1);
+            height: 300px;
+            object-fit: cover;
         }
 
         .gallery-overlay {
@@ -253,99 +245,77 @@
             font-size: 0.95rem;
         }
 
-        .video-section {
-            padding: 80px 5%;
-            background: white;
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .video-card {
-            background: linear-gradient(135deg, #fffef8 0%, #ffffff 100%);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-        }
-
-        .video-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(218, 165, 32, 0.25);
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 250px;
+        .type-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
             background: linear-gradient(135deg, #DAA520, #FFD700);
-            display: flex;
-            align-items: center;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 10;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
             justify-content: center;
-            font-size: 5rem;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
             position: relative;
         }
 
-        .play-button {
+        .lightbox-content img,
+        .lightbox-content video {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+        }
+
+        .lightbox-close {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: white;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s;
         }
 
-        .video-card:hover .play-button {
-            transform: scale(1.1);
-        }
-
-        .video-content {
-            padding: 2rem;
-        }
-
-        .video-title {
-            font-size: 1.5rem;
-            color: #DAA520;
-            margin-bottom: 0.5rem;
-        }
-
-        .video-description {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .stats-banner {
-            padding: 80px 5%;
-            background: linear-gradient(135deg, #DAA520, #FFD700);
+        .lightbox-info {
             color: white;
             text-align: center;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .stat-item h3 {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-item p {
-            font-size: 1.3rem;
-            opacity: 0.95;
+            margin-top: 1rem;
         }
 
         footer {
@@ -393,11 +363,7 @@
             }
 
             .nav-links {
-                gap: 1rem;
-            }
-
-            .nav-links a {
-                font-size: 0.9rem;
+                display: none;
             }
 
             .gallery-grid {
@@ -428,209 +394,25 @@
     </section>
 
     <section class="gallery-section">
-        <h2 class="section-title">Photo Gallery</h2>
+        <h2 class="section-title">Our Gallery</h2>
         <p class="section-subtitle">Browse through our collection of memorable events</p>
 
         <div class="gallery-filters">
-            <button class="filter-btn active">All</button>
-            <button class="filter-btn">Festivals</button>
-            <button class="filter-btn">Cultural Events</button>
-            <button class="filter-btn">Family Events</button>
-            <button class="filter-btn">Youth Programs</button>
+            <button class="filter-btn active" onclick="filterGallery('all')">All</button>
+            <button class="filter-btn" onclick="filterGallery('festivals')">Festivals</button>
+            <button class="filter-btn" onclick="filterGallery('cultural')">Cultural Events</button>
+            <button class="filter-btn" onclick="filterGallery('family')">Family Events</button>
+            <button class="filter-btn" onclick="filterGallery('youth')">Youth Programs</button>
         </div>
 
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <div class="gallery-image">🪔</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Sankranti 2025</div>
-                    <div class="gallery-description">Traditional harvest festival celebration</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🎭</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Cultural Dance Program</div>
-                    <div class="gallery-description">Kuchipudi and Bharatanatyam performances</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">💐</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Bathukamma Festival</div>
-                    <div class="gallery-description">Colorful floral arrangements and dances</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">👨‍👩‍👧‍👦</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Family Picnic 2025</div>
-                    <div class="gallery-description">Fun day with games and activities</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🎵</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Music Night</div>
-                    <div class="gallery-description">Classical and contemporary performances</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🌺</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Ugadi Celebration</div>
-                    <div class="gallery-description">Telugu New Year festivities</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🏆</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Youth Talent Competition</div>
-                    <div class="gallery-description">Young stars showcasing their skills</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🪷</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Prayer Ceremony</div>
-                    <div class="gallery-description">Community spiritual gathering</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🎪</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Annual Carnival</div>
-                    <div class="gallery-description">Games, food stalls, and entertainment</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">📚</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Telugu Language Class</div>
-                    <div class="gallery-description">Teaching our mother tongue to kids</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🎨</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Rangoli Competition</div>
-                    <div class="gallery-description">Beautiful traditional floor art</div>
-                </div>
-            </div>
-
-            <div class="gallery-item">
-                <div class="gallery-image">🥘</div>
-                <div class="gallery-overlay">
-                    <div class="gallery-title">Food Festival</div>
-                    <div class="gallery-description">Authentic Telugu cuisine showcase</div>
-                </div>
-            </div>
-        </div>
+        <div id="galleryContainer" class="loading">Loading gallery...</div>
     </section>
 
-    <section class="stats-banner">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <h3>1000+</h3>
-                <p>Photos Captured</p>
-            </div>
-            <div class="stat-item">
-                <h3>50+</h3>
-                <p>Events Documented</p>
-            </div>
-            <div class="stat-item">
-                <h3>100+</h3>
-                <p>Video Recordings</p>
-            </div>
-            <div class="stat-item">
-                <h3>15</h3>
-                <p>Years of Memories</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="video-section">
-        <h2 class="section-title">Video Highlights</h2>
-        <p class="section-subtitle">Relive the magic through our video collection</p>
-
-        <div class="video-grid">
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">Sankranti 2025 Highlights</h3>
-                    <p class="video-description">Watch the complete coverage of our grand Sankranti celebration with kite flying, traditional games, and cultural programs.</p>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">Bathukamma Dance Performance</h3>
-                    <p class="video-description">Beautiful traditional dance performances by our talented women celebrating the floral festival.</p>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">Youth Talent Show 2025</h3>
-                    <p class="video-description">Amazing performances from our young stars in dance, music, and drama competitions.</p>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">Ugadi Celebration</h3>
-                    <p class="video-description">Telugu New Year celebrations with traditional rituals, cultural programs, and community feast.</p>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">KTA Documentary</h3>
-                    <p class="video-description">Our journey over 15 years - stories, achievements, and the spirit of our Telugu community.</p>
-                </div>
-            </div>
-
-            <div class="video-card">
-                <div class="video-thumbnail">
-                    🎬
-                    <div class="play-button">▶</div>
-                </div>
-                <div class="video-content">
-                    <h3 class="video-title">Cultural Program 2024</h3>
-                    <p class="video-description">Annual cultural extravaganza featuring traditional Telugu music, dance, and theatrical performances.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" onclick="closeLightbox()">×</div>
+        <div class="lightbox-content" id="lightboxContent"></div>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -665,14 +447,121 @@
     </footer>
 
     <script>
-        // Filter functionality
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        const API_URL = window.location.origin;
+        let allItems = [];
+        let currentFilter = 'all';
+
+        async function loadGallery() {
+            const container = document.getElementById('galleryContainer');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/gallery`);
+                allItems = await response.json();
+
+                if (allItems.length === 0) {
+                    container.innerHTML = '<div class="loading">No photos or videos yet. Check back soon!</div>';
+                    return;
+                }
+
+                displayGallery(allItems);
+            } catch (error) {
+                container.innerHTML = '<div class="loading">Error loading gallery. Please try again later.</div>';
+            }
+        }
+
+        function displayGallery(items) {
+            const container = document.getElementById('galleryContainer');
+            
+            const filteredItems = currentFilter === 'all' 
+                ? items 
+                : items.filter(item => item.category === currentFilter);
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<div class="loading">No items in this category yet.</div>';
+                return;
+            }
+
+            container.innerHTML = '<div class="gallery-grid">' + filteredItems.map(item => `
+                <div class="gallery-item" onclick="openLightbox(${item.id})">
+                    <span class="type-badge">${item.type === 'video' ? '🎥 Video' : '📷 Photo'}</span>
+                    ${item.type === 'video' ? 
+                        `<video class="gallery-video" src="${item.url}" muted></video>` :
+                        `<img class="gallery-image" src="${item.url}" alt="${item.title}" />`
+                    }
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">${item.title}</div>
+                        <div class="gallery-description">${item.description}</div>
+                    </div>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        function filterGallery(category) {
+            currentFilter = category;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
+            event.target.classList.add('active');
+            
+            displayGallery(allItems);
+        }
+
+        function openLightbox(id) {
+            const item = allItems.find(i => i.id === id);
+            if (!item) return;
+
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightboxContent');
+            
+            if (item.type === 'video') {
+                content.innerHTML = `
+                    <video controls autoplay style="max-width: 100%; max-height: 90vh; border-radius: 10px;">
+                        <source src="${item.url}" type="video/mp4">
+                    </video>
+                    <div class="lightbox-info">
+                        <h2>${item.title}</h2>
+                        <p>${item.description}</p>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <img src="${item.url}" alt="${item.title}" style="max-width: 100%; max-height: 90vh; border-radius: 10px;" />
+                    <div class="lightbox-info">
+                        <h2>${item.title}</h2>
+                        <p>${item.description}</p>
+                    </div>
+                `;
+            }
+            
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            
+            // Stop videos when closing
+            const videos = lightbox.querySelectorAll('video');
+            videos.forEach(video => video.pause());
+        }
+
+        // Close lightbox on background click
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
         });
+
+        // Close lightbox with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        window.addEventListener('load', loadGallery);
     </script>
 </body>
 </html>
