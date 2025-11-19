@@ -464,10 +464,17 @@
             <h2 class="section-title">🖼️ Manage Gallery</h2>
             
             <div class="card">
-                <h3 style="margin-bottom: 1.5rem;">Add New Photo</h3>
-                <form id="addPhotoForm">
+                <h3 style="margin-bottom: 1.5rem;">Upload Photo or Video</h3>
+                <form id="addPhotoForm" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label>Photo Title *</label>
+                        <label>Select File (Image or Video) *</label>
+                        <input type="file" id="photoFile" required accept="image/*,video/*" style="padding: 0.8rem;">
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">
+                            Supported: JPG, PNG, GIF, MP4, MOV, AVI (Max 50MB)
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Title *</label>
                         <input type="text" id="photoTitle" required placeholder="e.g., Sankranti 2025">
                     </div>
                     <div class="form-group">
@@ -484,11 +491,7 @@
                             <option value="youth">Youth Programs</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Photo Icon (emoji)</label>
-                        <input type="text" id="photoIcon" placeholder="🪔" maxlength="2">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Photo</button>
+                    <button type="submit" class="btn btn-primary" id="uploadBtn">Upload File</button>
                 </form>
             </div>
 
