@@ -76,10 +76,10 @@ function initializeDataFiles() {
     if (!fs.existsSync(USERS_FILE)) {
         const defaultAdmin = {
             'abhinav.reddivari@gmail.com': {
-                name: 'WEBSITE CREATOR',
+                name: 'Abhinav Reddivari',
                 email: 'abhinav.reddivari@gmail.com',
-                phone: 'No Phone Number',
-                password: bcrypt.hashSync('the@dmin143', 10),
+                phone: '+60123456789',
+                password: bcrypt.hashSync('admin123', 10),
                 isAdmin: true,
                 memberSince: new Date().toISOString()
             }
@@ -359,7 +359,7 @@ app.delete('/api/gallery/:id', authenticateToken, verifyAdmin, (req, res) => {
     res.json({ message: 'Item deleted' });
 });
 
-// ==================== CONTACT MESSAGES ROUTES ====================
+// ==================== CONTACT MESSAGES ROUTES WITH FAQ ====================
 
 app.post('/api/contact', (req, res) => {
     const messages = readData(MESSAGES_FILE);
@@ -367,12 +367,47 @@ app.post('/api/contact', (req, res) => {
         id: messages.length > 0 ? Math.max(...messages.map(m => m.id)) + 1 : 1,
         ...req.body,
         date: new Date().toISOString(),
-        read: false
+        read: false,
+        likes: 0
     };
     
     messages.push(newMessage);
     writeData(MESSAGES_FILE, messages);
     res.json({ message: 'Message sent successfully' });
+});
+
+// Get top 20 liked FAQs (public)
+app.get('/api/faqs', (req, res) => {
+    const messages = readData(MESSAGES_FILE);
+    
+    // Sort by likes (descending) and get top 20
+    const topFAQs = messages
+        .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+        .slice(0, 20)
+        .map(m => ({
+            id: m.id,
+            name: m.name,
+            subject: m.subject,
+            message: m.message,
+            date: m.date,
+            likes: m.likes || 0
+        }));
+    
+    res.json(topFAQs);
+});
+
+// Like a question (public)
+app.post('/api/faqs/:id/like', (req, res) => {
+    const messages = readData(MESSAGES_FILE);
+    const message = messages.find(m => m.id === parseInt(req.params.id));
+    
+    if (!message) {
+        return res.status(404).json({ error: 'Message not found' });
+    }
+    
+    message.likes = (message.likes || 0) + 1;
+    writeData(MESSAGES_FILE, messages);
+    res.json({ likes: message.likes });
 });
 
 app.get('/api/contact', authenticateToken, verifyAdmin, (req, res) => {
