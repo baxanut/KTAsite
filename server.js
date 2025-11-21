@@ -359,8 +359,9 @@ app.delete('/api/gallery/:id', authenticateToken, verifyAdmin, (req, res) => {
     res.json({ message: 'Item deleted' });
 });
 
-// ==================== CONTACT MESSAGES ROUTES WITH FAQ ====================
+// ==================== CONTACT MESSAGES ROUTES (FAQ SYSTEM) ====================
 
+// Submit contact message/question
 app.post('/api/contact', (req, res) => {
     const messages = readData(MESSAGES_FILE);
     const newMessage = {
@@ -368,53 +369,36 @@ app.post('/api/contact', (req, res) => {
         ...req.body,
         date: new Date().toISOString(),
         read: false,
-        likes: 0
+        answered: false,
+        answer: null,
+        answeredBy: null,
+        answeredAt: null,
+        likes: 0,
+        public: false // Admin can make it public after answering
     };
     
     messages.push(newMessage);
     writeData(MESSAGES_FILE, messages);
-    res.json({ message: 'Message sent successfully' });
+    res.json({ message: 'Message sent successfully', id: newMessage.id });
 });
 
-// Get top 20 liked FAQs (public)
-app.get('/api/faqs', (req, res) => {
-    const messages = readData(MESSAGES_FILE);
-    
-    // Sort by likes (descending) and get top 20
-    const topFAQs = messages
-        .sort((a, b) => (b.likes || 0) - (a.likes || 0))
-        .slice(0, 20)
-        .map(m => ({
-            id: m.id,
-            name: m.name,
-            subject: m.subject,
-            message: m.message,
-            date: m.date,
-            likes: m.likes || 0
-        }));
-    
-    res.json(topFAQs);
-});
-
-// Like a question (public)
-app.post('/api/faqs/:id/like', (req, res) => {
-    const messages = readData(MESSAGES_FILE);
-    const message = messages.find(m => m.id === parseInt(req.params.id));
-    
-    if (!message) {
-        return res.status(404).json({ error: 'Message not found' });
-    }
-    
-    message.likes = (message.likes || 0) + 1;
-    writeData(MESSAGES_FILE, messages);
-    res.json({ likes: message.likes });
-});
-
+// Get all messages (admin only)
 app.get('/api/contact', authenticateToken, verifyAdmin, (req, res) => {
     const messages = readData(MESSAGES_FILE);
     res.json(messages);
 });
 
+// Get public FAQ (for users - top 20 most liked)
+app.get('/api/faq', (req, res) => {
+    const messages = readData(MESSAGES_FILE);
+    const publicFAQs = messages
+        .filter(m => m.public && m.answered)
+        .sort((a, b) => b.likes - a.likes)
+        .slice(0, 20);
+    res.json(publicFAQs);
+});
+
+// Mark message as read (admin only)
 app.put('/api/contact/:id/read', authenticateToken, verifyAdmin, (req, res) => {
     const messages = readData(MESSAGES_FILE);
     const message = messages.find(m => m.id === parseInt(req.params.id));
@@ -428,6 +412,56 @@ app.put('/api/contact/:id/read', authenticateToken, verifyAdmin, (req, res) => {
     res.json(message);
 });
 
+// Answer a message (admin only)
+app.put('/api/contact/:id/answer', authenticateToken, verifyAdmin, (req, res) => {
+    const { answer, makePublic } = req.body;
+    const messages = readData(MESSAGES_FILE);
+    const message = messages.find(m => m.id === parseInt(req.params.id));
+    
+    if (!message) {
+        return res.status(404).json({ error: 'Message not found' });
+    }
+    
+    message.answer = answer;
+    message.answered = true;
+    message.answeredBy = req.user.email;
+    message.answeredAt = new Date().toISOString();
+    message.read = true;
+    message.public = makePublic || false;
+    
+    writeData(MESSAGES_FILE, messages);
+    res.json(message);
+});
+
+// Toggle public status (admin only)
+app.put('/api/contact/:id/toggle-public', authenticateToken, verifyAdmin, (req, res) => {
+    const messages = readData(MESSAGES_FILE);
+    const message = messages.find(m => m.id === parseInt(req.params.id));
+    
+    if (!message) {
+        return res.status(404).json({ error: 'Message not found' });
+    }
+    
+    message.public = !message.public;
+    writeData(MESSAGES_FILE, messages);
+    res.json(message);
+});
+
+// Like a FAQ (anyone can like)
+app.post('/api/faq/:id/like', (req, res) => {
+    const messages = readData(MESSAGES_FILE);
+    const message = messages.find(m => m.id === parseInt(req.params.id));
+    
+    if (!message || !message.public) {
+        return res.status(404).json({ error: 'FAQ not found' });
+    }
+    
+    message.likes = (message.likes || 0) + 1;
+    writeData(MESSAGES_FILE, messages);
+    res.json({ likes: message.likes });
+});
+
+// Delete message (admin only)
 app.delete('/api/contact/:id', authenticateToken, verifyAdmin, (req, res) => {
     let messages = readData(MESSAGES_FILE);
     messages = messages.filter(m => m.id !== parseInt(req.params.id));
