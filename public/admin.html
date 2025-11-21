@@ -828,8 +828,16 @@
                     return;
                 }
 
+                // Sort: unanswered first, then by date
+                messages.sort((a, b) => {
+                    if (a.answered === b.answered) {
+                        return new Date(b.date) - new Date(a.date);
+                    }
+                    return a.answered ? 1 : -1;
+                });
+
                 container.innerHTML = messages.map(msg => `
-                    <div class="message-card">
+                    <div class="message-card" style="border-left: 5px solid ${msg.answered ? '#28a745' : '#DAA520'}">
                         <div class="message-header">
                             <div class="message-info">
                                 <strong>${msg.name}</strong> (${msg.email})
@@ -837,12 +845,39 @@
                                     Subject: ${msg.subject} | ${new Date(msg.date).toLocaleDateString()}
                                 </p>
                             </div>
-                            <span class="badge ${msg.read ? 'badge-read' : 'badge-new'}">
-                                ${msg.read ? 'Read' : 'New'}
-                            </span>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="badge ${msg.read ? 'badge-read' : 'badge-new'}">
+                                    ${msg.read ? 'Read' : 'New'}
+                                </span>
+                                <span class="badge ${msg.answered ? 'badge-new' : 'badge-read'}">
+                                    ${msg.answered ? '✓ Answered' : 'Unanswered'}
+                                </span>
+                                ${msg.public ? '<span class="badge badge-new">👁️ Public</span>' : ''}
+                                ${msg.likes > 0 ? `<span class="badge badge-read">❤️ ${msg.likes}</span>` : ''}
+                            </div>
                         </div>
-                        <div class="message-content">${msg.message}</div>
-                        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        <div class="message-content">
+                            <strong>Question:</strong><br>
+                            ${msg.message}
+                        </div>
+                        ${msg.answered ? `
+                            <div class="message-content" style="background: #e8f5e9; margin-top: 1rem;">
+                                <strong>Answer:</strong><br>
+                                ${msg.answer}
+                                <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">
+                                    Answered by ${msg.answeredBy} on ${new Date(msg.answeredAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                        ` : ''}
+                        <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn ${msg.answered ? 'btn-secondary' : 'btn-primary'}" onclick="openAnswerModal(${msg.id})">
+                                ${msg.answered ? '✏️ Edit Answer' : '✍️ Answer Question'}
+                            </button>
+                            ${msg.answered ? 
+                                `<button class="btn ${msg.public ? 'btn-secondary' : 'btn-primary'}" onclick="togglePublic(${msg.id})">
+                                    ${msg.public ? '🔒 Make Private' : '👁️ Make Public'}
+                                </button>` : ''
+                            }
                             ${!msg.read ? `<button class="btn btn-secondary" onclick="markAsRead(${msg.id})">Mark as Read</button>` : ''}
                             <button class="btn btn-danger" onclick="deleteMessage(${msg.id})">Delete</button>
                         </div>
@@ -850,6 +885,95 @@
                 `).join('');
             } catch (error) {
                 container.innerHTML = '<div class="card"><p>Error loading messages</p></div>';
+            }
+        }
+
+        function openAnswerModal(msgId) {
+            console.log('Opening answer modal for message ID:', msgId);
+            
+            apiCall('/api/contact').then(messages => {
+                const msg = messages.find(m => m.id === msgId);
+                if (!msg) {
+                    alert('Message not found!');
+                    return;
+                }
+
+                console.log('Message found:', msg);
+
+                const content = document.getElementById('answerModalContent');
+                content.innerHTML = `
+                    <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <strong style="color: #DAA520;">Question from ${msg.name}:</strong><br>
+                        <strong style="margin-top: 0.5rem; display: block;">Subject: ${msg.subject}</strong>
+                        <p style="margin-top: 1rem; line-height: 1.6;">${msg.message}</p>
+                    </div>
+                    <form id="answerForm">
+                        <div class="form-group">
+                            <label>Your Answer *</label>
+                            <textarea id="answerText" required placeholder="Type your answer here..." style="min-height: 150px;">${msg.answer || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="makePublic" ${msg.public ? 'checked' : ''} style="width: auto; cursor: pointer;">
+                                <span>Make this answer public (visible in FAQ section)</span>
+                            </label>
+                            <small style="color: #666; display: block; margin-top: 0.5rem;">
+                                Public answers help other members with similar questions
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            ${msg.answered ? 'Update Answer' : 'Submit Answer'}
+                        </button>
+                    </form>
+                `;
+
+                document.getElementById('answerForm').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const answer = document.getElementById('answerText').value;
+                    const makePublic = document.getElementById('makePublic').checked;
+
+                    console.log('Submitting answer:', { msgId, answer, makePublic });
+
+                    try {
+                        const result = await apiCall(`/api/contact/${msgId}/answer`, 'PUT', { answer, makePublic });
+                        console.log('Answer submitted successfully:', result);
+                        alert('✅ Answer submitted successfully!');
+                        closeAnswerModal();
+                        loadMessages();
+                        updateDashboard();
+                    } catch (error) {
+                        console.error('Error submitting answer:', error);
+                        alert('❌ Error submitting answer: ' + error.message);
+                    }
+                };
+
+                const modal = document.getElementById('answerModal');
+                modal.classList.add('active');
+                console.log('Modal opened');
+            }).catch(error => {
+                console.error('Error loading messages:', error);
+                alert('Error loading message details: ' + error.message);
+            });
+        }
+
+        function closeAnswerModal() {
+            const modal = document.getElementById('answerModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'answerModal') {
+                closeAnswerModal();
+            }
+        });
+
+        async function togglePublic(id) {
+            try {
+                await apiCall(`/api/contact/${id}/toggle-public`, 'PUT');
+                loadMessages();
+            } catch (error) {
+                alert('Error toggling public status: ' + error.message);
             }
         }
 
