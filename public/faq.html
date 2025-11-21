@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Klang Telugu Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fffef8 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 30px rgba(218, 165, 32, 0.15);
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #DAA520, #FFD700, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #DAA520, #FFD700);
+            transition: width 0.3s;
+            border-radius: 2px;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #DAA520;
+        }
+
+        .page-header {
+            padding: 150px 5% 80px;
+            text-align: center;
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .faq-section {
+            padding: 80px 5%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border-left: 5px solid #DAA520;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 10px 30px rgba(218, 165, 32, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .faq-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .faq-asker {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .faq-question {
+            font-size: 1.4rem;
+            color: #DAA520;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .faq-answer {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .faq-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .faq-meta {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .like-btn {
+            background: white;
+            border: 2px solid #DAA520;
+            color: #DAA520;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .like-btn:hover {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .like-btn.liked {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+        }
+
+        .ask-question-banner {
+            background: linear-gradient(135deg, #DAA520, #FFD700);
+            color: white;
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .ask-question-banner h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .ask-btn {
+            padding: 1rem 3rem;
+            background: white;
+            color: #DAA520;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .ask-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 5%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin: 0.5rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .faq-question {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo-img">🏛️</div>
+            <div class="logo">KTA</div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="faq.html" class="active">FAQ</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="page-header">
+        <h1>Frequently Asked Questions</h1>
+        <p>Top questions answered by our community</p>
+    </section>
+
+    <section class="faq-section">
+        <h2 class="section-title">Popular Questions</h2>
+        <p class="section-subtitle">Browse through the most helpful questions and answers</p>
+
+        <div id="faqContainer" class="loading">Loading FAQs...</div>
+
+        <div class="ask-question-banner">
+            <h2>Can't Find Your Answer?</h2>
+            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">Ask us anything! Our team will respond to your question.</p>
+            <a href="contact.html" class="ask-btn">Ask a Question</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Klang Telugu Association</h3>
+                <p>Part of <a href="https://telugumalaysia.org/" target="_blank" style="color: #FFD700; text-decoration: underline;">Telugu Association of Malaysia</a></p>
+                <p>Building bridges, preserving culture since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="about.html">About Us</a>
+                <a href="events.html">Events</a>
+                <a href="gallery.html">Photo Gallery</a>
+                <a href="donate.html">Make a Donation</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@klangtelugu.org</p>
+                <p>📱 +60 12 345 6789</p>
+                <p>📍 Klang, Selangor, Malaysia</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+                <a href="#">WhatsApp Community</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Klang Telugu Association. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = window.location.origin;
+        let likedFAQs = JSON.parse(localStorage.getItem('likedFAQs') || '[]');
+
+        async function loadFAQs() {
+            const container = document.getElementById('faqContainer');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/faq`);
+                const faqs = await response.json();
+
+                if (faqs.length === 0) {
+                    container.innerHTML = '<div class="loading">No FAQs yet. Be the first to ask a question!</div>';
+                    return;
+                }
+
+                container.innerHTML = faqs.map(faq => `
+                    <div class="faq-item">
+                        <div class="faq-header">
+                            <div class="faq-asker">Asked by ${faq.name}</div>
+                        </div>
+                        <div class="faq-question">Q: ${faq.message}</div>
+                        <div class="faq-answer">
+                            <strong>Answer:</strong><br>
+                            ${faq.answer}
+                        </div>
+                        <div class="faq-footer">
+                            <div class="faq-meta">
+                                Answered on ${new Date(faq.answeredAt).toLocaleDateString()}
+                            </div>
+                            <button class="like-btn ${likedFAQs.includes(faq.id) ? 'liked' : ''}" 
+                                    onclick="likeFAQ(${faq.id})"
+                                    ${likedFAQs.includes(faq.id) ? 'disabled' : ''}>
+                                <span>❤️</span>
+                                <span>${faq.likes || 0} ${faq.likes === 1 ? 'Like' : 'Likes'}</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading FAQs:', error);
+                container.innerHTML = '<div class="loading">Error loading FAQs. Please try again later.</div>';
+            }
+        }
+
+        async function likeFAQ(id) {
+            if (likedFAQs.includes(id)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/faq/${id}/like`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    likedFAQs.push(id);
+                    localStorage.setItem('likedFAQs', JSON.stringify(likedFAQs));
+                    loadFAQs(); // Reload to show updated likes
+                }
+            } catch (error) {
+                console.error('Error liking FAQ:', error);
+            }
+        }
+
+        window.addEventListener('load', loadFAQs);
+    </script>
+</body>
+</html>
